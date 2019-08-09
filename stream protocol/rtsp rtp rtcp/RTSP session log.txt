@@ -1,0 +1,126 @@
+#点击播放后，java层打印的信息
+V/VLC/PlaybackService: Loading position 0 in [org.videolan.medialibrary.media.MediaWrapper@2fa087e4]
+D/VLC: [b48cf028/5d6] core input: Creating an input for 'rtsp://10.3.20.185/onvif-media/media.amp'
+D/VLC: [b48cf028/5f5] core input: using timeshift granularity of 50 MiB
+D/VLC: [b48cf028/5f5] core input: using default timeshift path
+D/VLC: [b48cf028/5f5] core input: `rtsp://admin:admin@10.3.20.185/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast' gives access `rtsp' demux `any' path `admin:admin@10.3.20.185/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast'
+D/VLC: [a095a588/5f5] core input source: creating demux: access='rtsp' demux='any' location='admin:admin@10.3.20.185/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast' file='(null)'
+D/VLC: [a0829228/5f5] core demux: looking for access_demux module matching "rtsp": 6 candidates
+D/VLC: [a0829228/5f5] live555 demux: version 2016.11.28
+W/VLC: [a0829228/5f5] core demux: Password in a URI is DEPRECATED
+#[vlc-android/vlc/contrib/contrib-android-arm-linux-androideabi/live555/liveMedia/RTSPClient.cpp/connectToServer()]
+#使用RTSPClient尝试连接RTSPServer
+E/VLC-std: Opening connection to 10.3.20.185, port 554...
+#[vlc-android/vlc/contrib/contrib-android-arm-linux-androideabi/live555/liveMedia/RTSPClient.cpp/connectionHandler1()]
+#接收到远程的回复
+E/VLC-std: ...remote connection opened
+#[vlc-android/vlc/contrib/contrib-android-arm-linux-androideabi/live555/liveMedia/RTSPClient.cpp/sendRequest()]
+#sendRequest函数打印出来的消息
+           Sending request: OPTIONS rtsp://10.3.20.185:554/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast RTSP/1.0
+           CSeq: 2
+           User-Agent: LibVLC/3.0.0-git (LIVE555 Streaming Media v2016.11.28)
+I/VLC/BitmapCache: LRUCache size set to 107374182
+I/VLC/PlaybackService: Media.Event.MetaChanged: 12
+I/VLC/PlaybackService: Media.Event.MetaChanged: 12
+#[vlc-android/vlc/contrib/contrib-android-arm-linux-androideabi/live555/liveMedia/RTSPClient.cpp/handleResponseBytes()]
+#接收到远程的回复信息
+E/VLC-std: Received 143 new bytes of response data.
+E/VLC-std: Received a complete OPTIONS response:
+           RTSP/1.0 200 OK
+           CSeq: 2
+           #回应信息的public头字段中包括Server提供的所有可用方法
+           Public: DESCRIBE, GET_PARAMETER, PAUSE, PLAY, SETUP, SET_PARAMETER, TEARDOWN
+           Date: Wed, 19 Apr 2017 07:21:53 GMT
+E/VLC-std: Sending request: DESCRIBE rtsp://10.3.20.185:554/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast RTSP/1.0
+           CSeq: 3
+           User-Agent: LibVLC/3.0.0-git (LIVE555 Streaming Media v2016.11.28)
+           Accept: application/sdp
+E/VLC-std: Received 199 new bytes of response data.
+#Server回复需要认证
+E/VLC-std: Received a complete DESCRIBE response:           
+           RTSP/1.0 401 Unauthorized
+           CSeq: 3
+           WWW-Authenticate: Digest realm="AXIS_WS_ACCC8E41A320", nonce="00058c7aY52967318f73844d686966f513cfdc97f2b1db", stale=FALSE
+           Date: Wed, 19 Apr 2017 07:21:53 GMT
+E/VLC-std: Resending...
+#Client发送认证信息
+E/VLC-std: Sending request: DESCRIBE rtsp://10.3.20.185:554/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast RTSP/1.0
+           CSeq: 4           
+           Authorization: Digest username="admin", realm="AXIS_WS_ACCC8E41A320", nonce="00058c7aY52967318f73844d686966f513cfdc97f2b1db", uri="rtsp://10.3.20.185:554/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast", response="79c25155ce602bdda837ece72c5f5508"
+           User-Agent: LibVLC/3.0.0-git (LIVE555 Streaming Media v2016.11.28)
+           Accept: application/sdp
+E/VLC-std: Received 856 new bytes of response data.
+E/VLC-std: Received a complete DESCRIBE response:
+           RTSP/1.0 200 OK
+           CSeq: 4
+           Content-Type: application/sdp
+           Content-Base: rtsp://10.3.20.185:554/onvif-media/media.amp/
+           Date: Wed, 19 Apr 2017 07:21:55 GMT
+           Content-Length: 678
+
+           v=0 #version，SDP协议的version
+           o=- 1492586515743424 1492586515743424 IN IP4 10.3.20.185
+           s=Media Presentation #session name
+           e=NONE #email
+           b=AS:50000
+           t=0 0
+           a=control:rtsp://10.3.20.185:554/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast
+           a=range:npt=0.000000-
+           m=video 0 RTP/AVP 96
+           c=IN IP4 0.0.0.0 #connect data连接的一些数据
+           b=AS:50000
+           a=framerate:30.0
+           a=transform:1.000000,0.000000,0.000000;0.000000,0.995192,0.000000;0.000000,0.000000,1.000000
+           a=control:rtsp://10.3.20.185:554/onvif-media/media.amp/trackID=1?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast
+           a=rtpmap:96 H264/90000
+           a=fmtp:96 packetization-mode=1; profile-level-id=4D4029; sprop-parameter-sets=Z01AKZpmA8ARPy4C1AQEBBen,aO48gA==
+D/VLC: [a0829228/5f5] live555 demux: RTP subsession 'video/H264'
+#请求Server建立会话
+E/VLC-std: Sending request: SETUP rtsp://10.3.20.185:554/onvif-media/media.amp/trackID=1?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast RTSP/1.0
+           CSeq: 5
+           Authorization: Digest username="admin", realm="AXIS_WS_ACCC8E41A320", nonce="00058c7aY52967318f73844d686966f513cfdc97f2b1db", uri="rtsp://10.3.20.185:554/onvif-media/media.amp/", response="0f81c42f0f6f9b380e429a0b5adef2ef"
+           User-Agent: LibVLC/3.0.0-git (LIVE555 Streaming Media v2016.11.28)
+           Transport: RTP/AVP;unicast;client_port=54584-54585
+D/VLC: [b48cf028/5f5] core input: selecting program id=0
+D/VLC: [a0829228/5f5] live555 demux: setup start: 0.000000 stop:0.000000
+#Server回复会话已建立
+E/VLC-std: Received 198 new bytes of response data.
+           Received a complete SETUP response:
+           RTSP/1.0 200 OK
+           CSeq: 5
+           Session: CF14A038; timeout=60
+           Transport: RTP/AVP;unicast;client_port=54584-54585;server_port=50092-50093;ssrc=534B2131;mode="PLAY"
+           Date: Wed, 19 Apr 2017 07:21:56 GMT
+
+#Client请求Server传送数据
+           Sending request: PLAY rtsp://10.3.20.185:554/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast RTSP/1.0
+           CSeq: 6
+           Authorization: Digest username="admin", realm="AXIS_WS_ACCC8E41A320", nonce="00058c7aY52967318f73844d686966f513cfdc97f2b1db", uri="rtsp://10.3.20.185:554/onvif-media/media.amp/", response="96a7a81455dad1a9d73958699cbd69a0"
+           User-Agent: LibVLC/3.0.0-git (LIVE555 Streaming Media v2016.11.28)
+           Session: CF14A038
+           Range: npt=0.000-
+D/VLC/VideoPlayerActivity: MediaRouter information : android.media.MediaRouter@1a0d4467
+I/VLC/VideoPlayerActivity: No secondary display detected
+W/MediaRouter: removeCallback(org.videolan.vlc.gui.video.VideoPlayerActivity$1@d47b986): callback not registered
+D/VLC/VideoPlayerActivity: Continuing playback from PlaybackService at index 0
+E/VLC-std: Received 256 new bytes of response data.
+#Server回复数据传送信息
+E/VLC-std: Received a complete PLAY response:
+           RTSP/1.0 200 OK
+           CSeq: 6
+           Session: CF14A038
+           Range: npt=0-
+           RTP-Info: url=rtsp://10.3.20.185:554/onvif-media/media.amp/trackID=1?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast;seq=30405;rtptime=29935497
+           Date: Wed, 19 Apr 2017 07:21:57 GMT
+D/VLC: [a0829228/5f5] live555 demux: We have a timeout of 60 seconds
+D/VLC: [a0829228/5f5] live555 demux: play start: 0.000000 stop:0.000000
+D/VLC: [a0829228/5f5] core demux: using access_demux module "live555"
+D/VLC: [a0a54228/5f5] core packetizer: looking for packetizer module matching "any": 24 candidates
+D/VLC: [a0a54228/5f5] h264 packetizer: found NAL_SPS (sps_id=0)
+D/VLC: [a0a54228/5f5] h264 packetizer: found NAL_PPS (pps_id=0 sps_id=0)
+D/VLC: [a0a54228/5f5] core packetizer: using packetizer module "h264"
+D/VLC: [a0a53ea8/5f5] core decoder: looking for decoder module matching "mediacodec_ndk,all": 41 candidates
+W/VideoCapabilities: Unsupported profile 4 for video/avc
+W/VideoCapabilities: Unsupported profile 4 for video/avc
+W/VideoCapabilities: Unsupported profile 4 for video/avc
+......
