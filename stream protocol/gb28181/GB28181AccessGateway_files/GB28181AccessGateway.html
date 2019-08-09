@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0034)http://49.4.91.143:8001/gbagw.html -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>GB28181AccessGateway</title>
+	<style>
+		form {
+			margin: 10px 0;
+		}
+	</style>
+</head>
+
+<body>
+
+<h4><a><strong>当前环境：</strong></a>
+  <select id="environment" onchange="envChange();"> 
+    <option value="STG">STG</option> 
+    <option value="PROD">PROD</option> 
+    <option value="DEBUG">DEBUG</option> 
+  </select>
+</h4>
+
+<p>魏姣 田野1</p>
+<!--
+<table>
+<p>魏姣 田野2</p>
+<tr>
+	<td>
+		<form id="version" action="" method="get" target="ifm" onsubmit="createUrl('version', '/api/v1/version')" >
+			<input type="submit" value="网关版本信息" />
+		</form>
+	</td>
+	<td>
+		<form id="query_deviceList" action="" method="get" target="ifm" onsubmit="createUrl('query_deviceList', '/api/v1/message/query/deviceList')" >
+			<input type="submit" value="设备列表查询" />
+		</form>
+	</td>
+</tr>
+</table>
+-->
+<p>魏姣 田野3</p>
+
+<p><button onclick="ctrlOpenShut(this, &#39;gateway_related&#39;, &#39;网关相关&lt;&lt;...&#39;, &#39;网关相关&gt;&gt;...&#39;)">网关相关&lt;&lt;...</button></p>
+<div id="gateway_related" style="display:block">
+<form id="version" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm" onsubmit="createUrl(&#39;version&#39;, &#39;/api/v1/version&#39;)">
+	&nbsp;╠<input type="submit" value="网关版本信息">
+</form>
+
+<form id="info_subscribeServer" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm" onsubmit="createUrl(&#39;info_subscribeServer&#39;, &#39;/api/v1/info/subscribeServer&#39;)">
+	&nbsp;╠<input type="submit" value="订阅服务信息">
+</form>
+
+<form id="info_mediaServer" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm" onsubmit="createUrl(&#39;info_mediaServer&#39;, &#39;/api/v1/info/mediaServer&#39;)">
+	&nbsp;╚<input type="submit" value="媒体服务信息">
+</form>
+</div>
+
+<p><button onclick="ctrlOpenShut(this, &#39;device_related&#39;, &#39;设备相关&lt;&lt;...&#39;, &#39;设备相关&gt;&gt;...&#39;)">设备相关&lt;&lt;...</button></p>
+<div id="device_related" style="display:block">
+<form id="query_deviceList" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm" onsubmit="createUrl(&#39;query_deviceList&#39;, &#39;/api/v1/message/query/deviceList&#39;)">
+	&nbsp;╠<input type="submit" value="设备列表查询">
+</form>
+
+<form id="query_catalog" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;query_catalog&#39;, &#39;/api/v1/message/query/catalog&#39;)">
+	&nbsp;╠<input type="submit" value="设备目录查询">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>mode=</a><select name="mode"> 
+	<option value="0">快速回复</option> 
+	<option value="1">实时获取</option> 
+	</select><a title="0：同步返回结果，默认值；1：从下级获取实时目录信息，再回复；2：通过目录信息通知异步返回结果，适用于获取目录数较多的下级平台">☺</a>
+</form>
+
+<form id="query_deviceInfo" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;query_deviceInfo&#39;, &#39;/api/v1/message/query/deviceInfo&#39;)">
+	&nbsp;╠<input type="submit" value="设备信息查询">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+</form>
+
+<form id="query_deviceStatus" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;query_deviceStatus&#39;, &#39;/api/v1/message/query/deviceStatus&#39;)">
+	&nbsp;╚<input type="submit" value="设备状态查询">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+</form>
+</div>
+
+<p><button onclick="ctrlOpenShut(this, &#39;media_related&#39;, &#39;媒体相关&lt;&lt;...&#39;, &#39;媒体相关&gt;&gt;...&#39;)">媒体相关&lt;&lt;...</button></p>
+<div id="media_related" style="display:block">
+<form id="media_sessionList" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm" onsubmit="createUrl(&#39;media_sessionList&#39;, &#39;/api/v1/media/sessionList&#39;)">
+	&nbsp;╠<input type="submit" value="会话列表查询">
+</form>
+
+<form id="media_play" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;media_play&#39;, &#39;/api/v1/media/play&#39;)">
+	&nbsp;╠<input type="submit" value="实  时  预   览">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>channelId=</a><input type="text" name="channelId" value="" required="">
+	<a>pullProtocol=</a><select name="pullProtocol"> 
+	<option value="0">UDP</option> 
+	<option value="3">TCP</option> 
+	</select><a title="0：UDP（默认）；3：TCP，GB28181-2016定义，参考RFC4571">☺</a>
+	<a>pushUrl=</a><input type="text" size="50" name="pushUrl" value="rtmp://114.215.40.81:1935/rtmplive/deviceId" required="">
+</form>
+
+<form id="query_recordInfo" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;query_recordInfo&#39;, &#39;/api/v1/message/query/recordInfo&#39;)">
+	&nbsp;╠<input type="submit" value="录  像  查   询">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>channelId=</a><input type="text" name="channelId" value="" required="">
+	<a>startTime=</a><input type="text" size="10" maxlength="10" name="startTime" value="" required=""><a title="Unix时间戳，单位秒">☺</a>
+	<a>endTime=</a><input type="text" size="10" maxlength="10" name="endTime" value="" required=""><a title="Unix时间戳，单位秒">☺</a>
+	<a>type=</a><select name="type"> 
+	<option>all</option> 
+	<option>time</option> 
+	<option>alarm</option> 
+	<option>manual</option> 
+	</select><a title="all：全部；time：实时录像；alarm：事件录像；manual：手动录像">☺</a>
+</form>
+
+<form id="media_playback" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;media_playback&#39;, &#39;/api/v1/media/playback&#39;)">
+	&nbsp;╠<input type="submit" value="录  像  回   放">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>channelId=</a><input type="text" name="channelId" value="" required="">
+	<a>startTime=</a><input type="text" size="10" maxlength="10" name="startTime" value="" required=""><a title="Unix时间戳，单位秒">☺</a>
+	<a>endTime=</a><input type="text" size="10" maxlength="10" name="endTime" value="" required=""><a title="Unix时间戳，单位秒">☺</a>
+	<a>pullProtocol=</a><select name="pullProtocol"> 
+	<option value="0">UDP</option> 
+	<option value="3">TCP</option> 
+	</select><a title="0：UDP（默认）；3：TCP，GB28181-2016定义，参考RFC4571">☺</a>
+	<a>pushUrl=</a><input type="text" size="50" name="pushUrl" value="rtmp://114.215.40.81:1935/rtmplive/deviceId" required="">
+</form>
+
+<form id="media_control" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;media_control&#39;, &#39;/api/v1/media/control&#39;)">
+	&nbsp;╠<input type="submit" value="录像回放控制">
+	<a>sessionId=</a><input type="text" size="30" name="sessionId" value="" required="">
+	<a>sessionIdType=</a><select name="sessionIdType"> 
+	<option value="0">SessionId</option> 
+	<option value="1">ClientId</option> 
+	</select><a title="0：表示sessionId是录像回放时返回的sessionId，默认值；1：表示sessionId是录像唤醒时调用者携带的user_name（clientId）">☺</a>
+	<a>type=</a><select id="media_control_type" name="type" "="" required=""> 
+	<option></option> 
+	<option value="pause">暂停</option> 
+	<option value="resume">恢复</option> 
+	<option value="seek">拖放</option> 
+	<option value="speed">变倍</option> 
+	</select><a title="pause：暂停播放；resume：恢复播放；seek：拖放；speed：变倍播放">☺</a>
+	<a>range=</a><input type="text" size="5" name="range" value=""><a title="type=seek时必选，指定拖放时间点，相对此会话的起始播放时间，单位秒">☺</a>
+	<a>scale=</a><select name="scale"> 
+	<option>1</option> 
+	<option>0.25</option> 
+	<option>0.5</option> 
+	<option>2</option> 
+	<option>4</option> 
+	</select><a title="type=speed时必选，指定播放倍速，取值0.25、0.5、1、2、4">☺</a>
+</form>
+
+<form id="media_stop" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;media_stop&#39;, &#39;/api/v1/media/stop&#39;)">
+	&nbsp;╚<input type="submit" value="停止媒体会话">
+	<a>sessionId=</a><input type="text" size="30" name="sessionId" value="" required="">
+</form>
+</div>
+
+
+<p><button onclick="ctrlOpenShut(this, &#39;ptz_related&#39;, &#39;云台相关&lt;&lt;...&#39;, &#39;云台相关&gt;&gt;...&#39;)">云台相关&gt;&gt;...</button></p>
+<div id="ptz_related" style="display:none">
+<form id="control_ptzCmd" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;control_ptzCmd&#39;, &#39;/api/v1/message/control/ptzCmd&#39;)">
+	&nbsp;╠<input type="submit" value="云  台  控   制">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>channelId=</a><input type="text" name="channelId" value="" required="">
+	<a>code=</a><select name="code">
+	<option value="0">停止</option>
+	<option value="1">向上转动</option>
+	<option value="2">向下转动</option>
+	<option value="3">向左转动</option>
+	<option value="4">向右转动</option>
+	<option value="5">向左上转动</option>
+	<option value="6">向左下转动</option>
+	<option value="7">向右上转动</option>
+	<option value="8">向右下转动</option>
+	<option value="9">镜头变倍缩小</option>
+	<option value="10">镜头变倍放大</option>
+	<option value="11">光圈缩小</option>
+	<option value="12">光圈放大</option>
+	<option value="13">聚焦近</option>
+	<option value="14">聚焦远</option>
+	</select>
+	<a>speed=</a><input type="text" size="5" name="speed" value="128"><a title="云台转动速度，范围0~255，数值越大越快">☺</a>
+</form>
+
+<form id="operate_preset" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;operate_preset&#39;, &#39;/api/v1/message/operate/preset&#39;)">
+	&nbsp;╠<input type="submit" value="预 置 位 操 作">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>channelId=</a><input type="text" name="channelId" value="" required="">
+	<a>code=</a><select name="code">
+	<option value="1">设置预置位</option>
+	<option value="2">调用预置位</option>
+	<option value="3">删除预置位</option>
+	<option value="4">查询预置位</option>
+	</select>
+	<a style="font-size:80%;">预置位编号=</a><input type="text" size="5" name="presetId" value="1"><a title="预置位编号，取值范围1~255">☺</a>
+</form>
+
+<form id="control_homePosition" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;control_homePosition&#39;, &#39;/api/v1/message/control/homePosition&#39;)">
+	&nbsp;╠<input type="submit" value="看 守 位 控 制">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>channelId=</a><input type="text" name="channelId" value="" required="">
+	<a>code=</a><select name="code">
+	<option value="0">关闭看守位</option>
+	<option value="1">开启看守位</option>
+	</select>
+	<a style="font-size:80%;">自动归位时间间隔=</a><input type="text" size="3" name="resetTime" value="300"><a title="自动归位时间间隔，单位秒">☺</a>
+	<a style="font-size:80%;">预置位编号=</a><input type="text" size="3" name="presetId" value="1"><a title="预置位编号，取值范围1~255">☺</a>
+</form>
+
+<form id="control_dragZoom" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;control_dragZoom&#39;, &#39;/api/v1/message/control/dragZoom&#39;)">
+	&nbsp;╠<input type="submit" value="拉框定位控制">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>channelId=</a><input type="text" name="channelId" value="" required="">
+	<a>code=</a><select name="code">
+	<option value="0">拉框放大</option>
+	<option value="1">拉框缩小</option>
+	</select>
+	<a style="font-size:80%;">播放窗口长度=</a><input type="text" size="3" name="length" value="1280">
+	<a style="font-size:80%;">播放窗口宽度=</a><input type="text" size="3" name="width" value="720">
+	<a style="font-size:80%;">拉框中心横坐标=</a><input type="text" size="3" name="midPointX" value="">
+	<a style="font-size:80%;">拉框中心纵坐标=</a><input type="text" size="3" name="midPointY" value="">
+	<a style="font-size:80%;">拉框长度=</a><input type="text" size="3" name="lengthX" value="">
+	<a style="font-size:80%;">拉框宽度=</a><input type="text" size="3" name="lengthY" value="">
+</form>
+
+<form id="control_cruise" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;control_cruise&#39;, &#39;/api/v1/message/control/cruise&#39;)">
+	&nbsp;╠<input type="submit" value="巡  航  控   制">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>channelId=</a><input type="text" name="channelId" value="" required="">
+	<a>code=</a><select name="code">
+	<option value="1">加入一个巡航点</option>
+	<option value="2">删除一个巡航点</option>
+	<option value="3">设置巡航速度</option>
+	<option value="4">设置巡航停留时间</option>
+	<option value="5">开始巡航</option>
+	<option value="6">停止巡航</option>
+	<option value="7">删除巡航组</option>
+	</select>
+	<a style="font-size:80%;">巡航组编号=</a><input type="text" size="3" name="cruiseId" value="0"><a title="巡航组编号，取值范围0~255">☺</a>
+	<a style="font-size:80%;">预置位编号=</a><input type="text" size="3" name="presetId" value="1"><a title="预置位编号，取值范围1~255，加入/删除巡航点时必选">☺</a>
+	<a style="font-size:80%;">巡航速度=</a><input type="text" size="3" name="speed" value="2048"><a title="巡航速度，取值范围1~4095，设置巡航速度时必选">☺</a>
+	<a style="font-size:80%;">巡航停留时间=</a><input type="text" size="3" name="stayTime" value="15"><a title="巡航停留时间，单位秒，取值范围1~4095，设置巡航停留时间时必选">☺</a>
+</form>
+
+<form id="control_scan" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;control_scan&#39;, &#39;/api/v1/message/control/scan&#39;)">
+	&nbsp;╠<input type="submit" value="扫  描  控   制">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>channelId=</a><input type="text" name="channelId" value="" required="">
+	<a>code=</a><select name="code">
+	<option value="1">开始自动扫描</option>
+	<option value="2">设置自动扫描左边界</option>
+	<option value="3">设置自动扫描右边界</option>
+	<option value="4">设置自动扫描速度</option>
+	<option value="5">停止扫描</option>
+	</select>
+	<a style="font-size:80%;">扫描组编号=</a><input type="text" size="5" name="scanId" value="0"><a title="扫描组编号，取值范围0~255">☺</a>
+	<a style="font-size:80%;">扫描速度=</a><input type="text" size="5" name="speed" value="2048"><a title="扫描速度，取值范围1~4095，设置自动扫描速度时必选">☺</a>
+</form>
+
+<form id="control_auxSwitch" action="http://49.4.91.143:8001/gbagw.html" method="get" target="ifm2" onsubmit="createUrl(&#39;control_auxSwitch&#39;, &#39;/api/v1/message/control/auxSwitch&#39;)">
+	&nbsp;╚<input type="submit" value="辅助开关控制">
+	<a>deviceId=</a><input type="text" name="deviceId" value="" required="">
+	<a>channelId=</a><input type="text" name="channelId" value="" required="">
+	<a>code=</a><select name="code">
+	<option value="0">关闭开关</option>
+	<option value="1">开启开关</option>
+	</select>
+	<a style="font-size:80%;">辅助开关=</a><select name="switchId">
+	<option value="1">雨刷</option>
+	</select><a title="辅助开关编号，1-雨刷">☺</a>
+</form>
+</div>
+
+<form id="common_req" action="http://49.4.91.143:8001/gbagw.html" method="post" target="ifm2" onsubmit="createUrl(&#39;common_req&#39;, &#39;&#39;)">
+	<input type="submit" value="通  用  请   求">
+	<!--
+	<a>url:</a><input id="common_req_url" type="text" size="30" name="" value="" required />
+	-->
+
+	<a>url:</a><span>
+	<select id="common_req_select_url" onchange="this.parentNode.nextSibling.value=this.value">
+		<option value="">自定义</option>
+		<!--
+		-->
+		<option value="/api/v1/version">网关版本信息</option>
+		<option value="/api/v1/message/query/deviceList">设备列表查询</option>
+		<option value="/api/v1/message/query/catalog?deviceId=34020000001110000001">设备目录查询</option>
+		<option value="/api/v1/message/query/deviceInfo?deviceId=34020000001110000001">设备信息查询</option>
+		<option value="/api/v1/message/query/deviceStatus?deviceId=34020000001110000001">设备状态查询</option>
+		<option value="/api/v1/media/play?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;pullProtocol=0&amp;pushUrl=rtmp://114.215.40.81:1935/rtmplive/test">实时预览</option>
+		<option value="/api/v1/message/query/recordInfo?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;startTime=0&amp;endTime=0&amp;type=all">录像查询</option>
+		<option value="/api/v1/media/play?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;startTime=0&amp;endTime=0&amp;pullProtocol=0&amp;pushUrl=rtmp://114.215.40.81:1935/rtmplive/test">录像回放</option>
+		<option value="/api/v1/media/control?sessionId=ac1d0b28-7f4180003030-059c4a00&amp;sessionIdType=0&amp;type=pause">录像回放暂停</option>
+		<option value="/api/v1/media/control?sessionId=ac1d0b28-7f4180003030-059c4a00&amp;sessionIdType=0&amp;type=resume">录像回放恢复</option>
+		<option value="/api/v1/media/control?sessionId=ac1d0b28-7f4180003030-059c4a00&amp;sessionIdType=0&amp;type=seek&amp;range=10">录像回放拖放</option>
+		<option value="/api/v1/media/control?sessionId=ac1d0b28-7f4180003030-059c4a00&amp;sessionIdType=0&amp;type=speed&amp;scale=2">录像回放变倍</option>
+		<option value="/api/v1/media/sessionList">会话列表查询</option>
+		<option value="/api/v1/media/stop?sessionId=ac1d0b28-7f4180003030-059c4a00">停止媒体会话</option>
+		<option value="/api/v1/message/control/ptzCmd?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;code=1&amp;speed=128">云台控制</option>
+		<option value="/api/v1/message/operate/preset?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;code=1&amp;presetId=1">预置位操作</option>
+		<option value="/api/v1/message/control/cruise?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;code=1&amp;cruiseId=0&amp;presetId=1&amp;speed=2048&amp;stayTime=5">巡航控制</option>
+		<option value="/api/v1/message/control/homePosition?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;code=1&amp;resetTime=300&amp;presetId=1">看守位控制</option>
+		<option value="/api/v1/message/control/dragZoom?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;code=1&amp;length=1280&amp;width=720&amp;midPointX=300&amp;midPointY=300&amp;lengthX=100&amp;lengthY=100">拉框定位控制</option>
+		<option value="/api/v1/message/control/scan?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;code=1&amp;scanId=0&amp;speed=2048">扫描控制</option>
+		<option value="/api/v1/message/control/auxSwitch?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;code=0&amp;switchId=1">关闭雨刷</option>
+		<option value="/api/v1/message/control/auxSwitch?deviceId=34020000001110000001&amp;channelId=34020000001310000001&amp;code=1&amp;switchId=1">开启雨刷</option>
+	</select></span><input id="common_req_box_url" size="170" name="">
+</form>
+
+<iframe src="./GB28181AccessGateway_files/saved_resource.html" name="ifm" id="ifm" width="600" height="400"></iframe>
+<iframe src="./GB28181AccessGateway_files/saved_resource(1).html" name="ifm2" id="ifm2" width="600" height="400"></iframe>
+
+
+
+
+<script language="javascript">
+	var g_env = document.getElementById("environment").value;
+	function envChange(){
+		var env = document.getElementById("environment").value;
+		g_env = env;
+	}
+	function createUrl(formId, url){
+		var apiAddr = "";
+		if (g_env == "STG"){
+			apiAddr = "http://49.4.91.143:8090"
+		} else if (g_env == "PROD") {
+			apiAddr = "http://49.4.90.216:8090"
+		} else if (g_env == "DEBUG") {
+			apiAddr = "http://172.29.11.53:8090"
+		} else {
+			alert("please check environment");
+		}
+
+		if (formId == "common_req") {
+			var common_req_box_url = document.getElementById("common_req_box_url").value;
+			window.alert(common_req_box_url);
+			document.getElementById(formId).action = apiAddr + common_req_box_url;
+		} else {
+			document.getElementById(formId).action = apiAddr + url;
+		}
+	}
+	function ctrlOpenShut(oSourceObj, oTargetObj, oOpenTip, oShutTip){
+		var sourceObj = typeof oSourceObj == "string" ? document.getElementById(oSourceObj) : oSourceObj;
+		var targetObj = typeof oTargetObj == "string" ? document.getElementById(oTargetObj) : oTargetObj;
+		var openTip = oOpenTip || "";
+		var shutTip = oShutTip || "";
+		if(targetObj.style.display!="none"){
+			targetObj.style.display="none";
+			if(openTip && shutTip){
+				sourceObj.innerHTML = shutTip; 
+			}
+		} else {
+			targetObj.style.display="block";
+			if(openTip  &&  shutTip){
+				sourceObj.innerHTML = openTip; 
+			}
+		}
+	}
+</script>
+
+</body></html>
