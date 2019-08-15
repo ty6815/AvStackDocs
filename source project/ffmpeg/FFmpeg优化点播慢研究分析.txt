@@ -1,0 +1,62 @@
+场景要求
+	项目要求点播速度是300到500毫秒之间，现在最长的点播延时是1300毫秒（有的时候甚至无法播放视频），生产环境是RTSP传输h264裸流数据，
+研究在接收到I帧的时候，开始出来图像，简化FFmpeg的调用逻辑（SPS/PPS已经预先知道，并且分辨率也是固定为1920*1080）
+
+问题点
+1)avformat_open_input取消问题的优化
+在代码中指定如下：		
+AVInputFormat* pAVInputFormat = av_find_input_format("h264");
+pAVFormatContext->iformat = pAVInputFormat;
+//if (avformat_open_input(&pAVFormatContext, "", pAVInputFormat, NULL) < 0)
+如果不调用avformat_open_input函数实际上，影响到的是av_read_frame(pVideo->m_pAVFormatContext, packet)
+出错提示：
+No start code is found
+Error splitting the input into NAL units
+实际上av_read_frame关键作用是从缓冲中拆分出一个个NAL单元（每一个NAL单元都是从00 00 00 01作为开始码，开始的），
+目前的解决方案是手动自己进行NAL单元的拆分，然后送到av_send_packet进行分帧解码（从而也取消了
+av_read_frame函数的调用），手动拆分出NAL，有点麻烦
+
+正在研究的是avformat_open_input可能会填充pAVFormatContext的URLProtocol协议字段，不过这已经是FFmpeg底层函数，
+可能不可访问，正在分析源码
+
+2）non-existing PPS 0 referenced问题
+在调用av_read_frame函数的时候，会提示如上错误
+non-existing PPS 0 referenced
+decode_slice_header error
+no frame!
+
+但是实际上，手动添加SPS/PPS的内容到extradata字符串中，
+unsigned char sps_pps[] = { 0x00 ,0x00 ,0x01,0x67,0x42,0x00 ,0x2a ,0x96 ,0x35 ,0x40 ,0xf0 ,0x04 ,0x4f ,0xcb ,0x37 ,0x01 ,0x01 ,0x01 ,0x40 ,0x00 ,0x01 ,0xc2 ,0x00 ,0x00 ,0x57 ,0xe4 ,0x01 ,0x00 ,0x00 ,0x00 ,0x01 ,0x68 ,0xce ,0x3c ,0x80, 0x00 };
+pAVFormatContext->streams[0]->codecpar->extradata_size = sizeof(sps_pps);
+pAVFormatContext->streams[0]->codecpar->extradata = (uint8_t*)av_mallocz(pAVFormatContext->streams[0]->codecpar->extradata_size + AV_INPUT_BUFFER_PADDING_SIZE);
+memset(pAVFormatContext->streams[0]->codecpar->extradata, 0, sizeof(sps_pps) + FF_INPUT_BUFFER_PADDING_SIZE);
+memcpy(pAVFormatContext->streams[0]->codecpar->extradata, sps_pps, sizeof(sps_pps));
+
+相关博客
+http://blog.51cto.com/fengyuzaitu/2058138
+http://blog.51cto.com/fengyuzaitu/2057885
+
+3）如果知道了码流格式，实际上不需要调用什么探测码流格式的函数，直接调用AVCodecContext解码，就可以
+目前在网上没有相关的资料
+
+
+FFmpeg日志定向输出到文件
+http://blog.51cto.com/fengyuzaitu/2053210
+avcodec_send_packet函数错误定位 
+http://blog.51cto.com/fengyuzaitu/2046171
+
+
+
+优化FFmpeg点播慢的问题经验总结：
+主要是通过指定解码格式H264来减少探测码流格式的时间
+http://blog.51cto.com/fengyuzaitu/1573766 
+http://blog.51cto.com/fengyuzaitu/1982996 
+
+有什么纰漏，请不吝赐教
+
+目前遇到如下两个问题
+1）第一次点播视频的时候，还是会慢些，然后其他路播放视频就快很多
+2）C#调用C++播放视频，比较慢
+
+有这方面的大牛，希望给点建议，谢谢
+
