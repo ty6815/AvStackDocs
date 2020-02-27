@@ -1,0 +1,14 @@
+srt-live-server:
+
+https://github.com/Edward-Wu/srt-live-server
+
+srt in srs:
+https://github.com/ossrs/srs/wiki/v4_CN_SRTSample
+srt 
+入门推荐学习资料:
+
+https://blog.csdn.net/weixin_42228920/article/details/90946259
+srt 
+测试数据分析:
+ 
+https://www.bilibili.com/video/av83480771
