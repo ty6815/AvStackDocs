@@ -1,0 +1,2625 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://dublincore.org/documents/2008/08/04/dc-html/">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="robots" content="index,follow" />
+    <meta name="creator" content="rfcmarkup version 1.115" />
+    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+<meta name="DC.Identifier" content="urn:ietf:id:schierl-payload-rtp-h265" />
+<meta name="DC.Description.Abstract" content="This memo describes an RTP payload format for the video coding
+standard ITU-T Recommendation H.265 and ISO/IEC International Standard
+23008-2, both also known as High Efficiency Video Coding (HEVC)
+[HEVC], developed by the Joint Collaborative Team on Video Coding
+(JCT-VC). The RTP payload format allows for packetization of one or
+more Network Abstraction Layer (NAL) units in each RTP packet payload,
+as well as fragmentation of a NAL unit into multiple RTP packets.
+Furthermore, it supports transmission of an HEVC stream over a single
+as well as multiple RTP flows. The payload format has wide
+applicability in videoconferencing, Internet video streaming, and high
+bit-rate entertainment-quality video, among others." />
+<meta name="DC.Creator" content="Sanchez, Yago" />
+<meta name="DC.Creator" content="Wenger, Stephan" />
+<meta name="DC.Creator" content="Schierl, Thomas" />
+<meta name="DC.Creator" content="Hannuksela, Miska" />
+<meta name="DC.Creator" content="Wang, Ye-Kui" />
+<meta name="DC.Date.Issued" content="2013-06-11" />
+<meta name="DC.Title" content="RTP Payload Format for High Efficiency Video Coding" />
+
+    <link rel="icon" href="/images/id.png" type="image/png" />
+    <link rel="shortcut icon" href="/images/id.png" type="image/png" />
+    <title>draft-schierl-payload-rtp-h265-01 - RTP Payload Format for High Efficiency Video Coding</title>
+    
+    
+    <style type="text/css">
+	@media only screen 
+	  and (min-width: 992px)
+	  and (max-width: 1199px) {
+	    body { font-size: 14pt; }
+            div.content { width: 96ex; margin: 0 auto; }
+        }
+	@media only screen 
+	  and (min-width: 768px)
+	  and (max-width: 991px) {
+            body { font-size: 14pt; }
+            div.content { width: 96ex; margin: 0 auto; }
+        }
+	@media only screen 
+	  and (min-width: 480px)
+	  and (max-width: 767px) {
+            body { font-size: 11pt; }
+            div.content { width: 96ex; margin: 0 auto; }
+        }
+	@media only screen 
+	  and (max-width: 479px) {
+            body { font-size: 8pt; }
+            div.content { width: 96ex; margin: 0 auto; }
+        }
+	@media only screen 
+	  and (min-device-width : 375px) 
+	  and (max-device-width : 667px) {
+            body { font-size: 9.5pt; }
+            div.content { width: 96ex; margin: 0 1px; }
+        }
+	@media only screen 
+	  and (min-device-width: 1200px) {
+            body { font-size: 10pt; margin: 0 4em; }
+            div.content { width: 96ex; margin: 0; }
+        }
+        h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+	    font-weight: bold;
+            line-height: 0pt;
+            display: inline;
+            white-space: pre;
+            font-family: monospace;
+            font-size: 1em;
+	    font-weight: bold;
+        }
+        pre {
+            font-size: 1em;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+	.pre {
+	    white-space: pre;
+	    font-family: monospace;
+	}
+	.header{
+	    font-weight: bold;
+	}
+        .newpage {
+            page-break-before: always;
+        }
+        .invisible {
+            text-decoration: none;
+            color: white;
+        }
+        a.selflink {
+          color: black;
+          text-decoration: none;
+        }
+        @media print {
+            body {
+                font-family: monospace;
+                font-size: 10.5pt;
+            }
+            h1, h2, h3, h4, h5, h6 {
+                font-size: 1em;
+            }
+        
+            a:link, a:visited {
+                color: inherit;
+                text-decoration: none;
+            }
+            .noprint {
+                display: none;
+            }
+        }
+	@media screen {
+	    .grey, .grey a:link, .grey a:visited {
+		color: #777;
+	    }
+            .docinfo {
+                background-color: #EEE;
+            }
+            .top {
+                border-top: 7px solid #EEE;
+            }
+            .bgwhite  { background-color: white; }
+            .bgred    { background-color: #F44; }
+            .bggrey   { background-color: #666; }
+            .bgbrown  { background-color: #840; }            
+            .bgorange { background-color: #FA0; }
+            .bgyellow { background-color: #EE0; }
+            .bgmagenta{ background-color: #F4F; }
+            .bgblue   { background-color: #66F; }
+            .bgcyan   { background-color: #4DD; }
+            .bggreen  { background-color: #4F4; }
+
+            .legend   { font-size: 90%; }
+            .cplate   { font-size: 70%; border: solid grey 1px; }
+	}
+    </style>
+    <!--[if IE]>
+    <style>
+    body {
+       font-size: 13px;
+       margin: 10px 10px;
+    }
+    </style>
+    <![endif]-->
+
+    <script type="text/javascript"><!--
+    function addHeaderTags() {
+	var spans = document.getElementsByTagName("span");
+	for (var i=0; i < spans.length; i++) {
+	    var elem = spans[i];
+	    if (elem) {
+		var level = elem.getAttribute("class");
+                if (level == "h1" || level == "h2" || level == "h3" || level == "h4" || level == "h5" || level == "h6") {
+                    elem.innerHTML = "<"+level+">"+elem.innerHTML+"</"+level+">";		
+                }
+	    }
+	}
+    }
+    var legend_html = "Colour legend:<br />      <table>         <tr><td>Unknown:</td>                   <td><span class='cplate bgwhite'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Draft:</td>                     <td><span class='cplate bgred'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Informational:</td>             <td><span class='cplate bgorange'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Experimental:</td>              <td><span class='cplate bgyellow'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Best Common Practice:</td>      <td><span class='cplate bgmagenta'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Proposed Standard:</td>         <td><span class='cplate bgblue'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Draft Standard (old designation):</td> <td><span class='cplate bgcyan'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Internet Standard:</td>         <td><span class='cplate bggreen'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Historic:</td>                  <td><span class='cplate bggrey'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>         <tr><td>Obsolete:</td>                  <td><span class='cplate bgbrown'>&nbsp;&nbsp;&nbsp;&nbsp;</span></td></tr>     </table>";
+    function showElem(id) {
+        var elem = document.getElementById(id);
+        elem.innerHTML = eval(id+"_html");
+        elem.style.visibility='visible';
+    }
+    function hideElem(id) {
+        var elem = document.getElementById(id);
+        elem.style.visibility='hidden';        
+        elem.innerHTML = "";
+    }
+    // -->
+    </script>
+</head>
+<body onload="addHeaderTags()">
+  <div class="content">
+   <div style="height: 13px;">
+      <div onmouseover="this.style.cursor='pointer';"
+         onclick="showElem('legend');"
+         onmouseout="hideElem('legend')"
+	 style="height: 6px; position: absolute;"
+         class="pre noprint docinfo bgred"
+         title="Click for colour legend." >                                                                        </div>
+      <div id="legend"
+           class="docinfo noprint pre legend"
+           style="position:absolute; top: 4px; left: 4ex; visibility:hidden; background-color: white; padding: 4px 9px 5px 7px; border: solid #345 1px; "
+           onmouseover="showElem('legend');"
+           onmouseout="hideElem('legend');">
+      </div>
+   </div>
+<span class="pre noprint docinfo top">[<a href="../html/" title="Document search and retrieval page">Docs</a>] [<a href="https://tools.ietf.org/id/draft-schierl-payload-rtp-h265-01.txt" title="Plaintext version of this document">txt</a>|<a href="/pdf/draft-schierl-payload-rtp-h265-01.txt" title="PDF version of this document">pdf</a>] [<a href='https://datatracker.ietf.org/doc/draft-schierl-payload-rtp-h265' title='IESG Datatracker information for this document'>Tracker</a>] [<a href="mailto:draft-schierl-payload-rtp-h265@tools.ietf.org?subject=draft-schierl-payload-rtp-h265%20" title="Send email to the document authors">Email</a>] [<a href="/rfcdiff?difftype=--hwdiff&amp;url2=draft-schierl-payload-rtp-h265-01.txt" title="Inline diff (wdiff)">Diff1</a>] [<a href="/rfcdiff?url2=draft-schierl-payload-rtp-h265-01.txt" title="Side-by-side diff">Diff2</a>] [<a href="/idnits?url=https://tools.ietf.org/id/draft-schierl-payload-rtp-h265-01.txt" title="Run an idnits check of this document">Nits</a>] [<a href="https://datatracker.ietf.org/ipr/search/?id=draft-schierl-payload-rtp-h265&amp;submit=draft" title="IPR disclosures related to this document">IPR</a>]         </span><br />
+<span class="pre noprint docinfo">                                                                        </span><br />
+<span class="pre noprint docinfo">Versions: <a href="./draft-schierl-payload-rtp-h265-00">00</a> <a href="./draft-schierl-payload-rtp-h265-01">01</a> <a href="./draft-schierl-payload-rtp-h265-02">02</a> <a href="./draft-schierl-payload-rtp-h265-03">03</a> <a href="./draft-ietf-payload-rtp-h265" title="draft-ietf-payload-rtp-h265 replaces this draft">draft-ietf-payload-rtp-h265</a>                       </span><br />
+<span class="pre noprint docinfo">                                                                        </span><br />
+<pre>
+Audio/Video Payload WG                                     T. Schierl
+Internet Draft                                         Fraunhofer HHI
+Intended status: Standards track                            S. Wenger
+Expires: April 2013                                             Vidyo
+                                                           Y.-K. Wang
+                                                             Qualcomm
+                                                     M. M. Hannuksela
+                                                                Nokia
+                                                     October 22, 2012
+
+
+
+
+            <span class="h1">RTP Payload Format for High Efficiency Video Coding</span>
+                   <span class="h1">draft-schierl-payload-rtp-h265-01.txt</span>
+
+
+
+
+Status of this Memo
+
+   This Internet-Draft is submitted to IETF in full conformance with
+   the provisions of <a href="./bcp78">BCP 78</a> and <a href="./bcp79">BCP 79</a>.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF), its areas, and its working groups.  Note that
+   other groups may also distribute working documents as Internet-
+   Drafts.
+
+   Internet-Drafts are draft documents valid for a maximum of six
+   months and may be updated, replaced, or obsoleted by other documents
+   at any time.  It is inappropriate to use Internet-Drafts as
+   reference material or to cite them other than as "work in progress."
+
+   The list of current Internet-Drafts can be accessed at
+   <a href="http://www.ietf.org/ietf/1id-abstracts.txt">http://www.ietf.org/ietf/1id-abstracts.txt</a>.
+
+   The list of Internet-Draft Shadow Directories can be accessed at
+   <a href="http://www.ietf.org/shadow.html">http://www.ietf.org/shadow.html</a>.
+
+   This Internet-Draft will expire on April 22, 2013.
+
+Copyright and License Notice
+
+   Copyright (c) 2012 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                 [Page 1]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-2" id="page-2" href="#page-2" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   This document is subject to <a href="./bcp78">BCP 78</a> and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (<a href="http://trustee.ietf.org/license-info">http://trustee.ietf.org/license-info</a>) in effect on the date of
+   publication of this document. Please review these documents
+   carefully, as they describe your rights and restrictions with
+   respect to this document. Code Components extracted from this
+   document must include Simplified BSD License text as described in
+   Section 4.e of the <a href="https://trustee.ietf.org/license-info">Trust Legal Provisions</a> and are provided without
+   warranty as described in the Simplified BSD License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                 [Page 2]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-3" id="page-3" href="#page-3" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+Abstract
+
+   This memo describes an RTP payload format for High Efficiency Video
+   Coding (HEVC) [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>], which is currently being developed by the
+   Joint Collaborative Team on Video Coding (JCT-VC).  The RTP payload
+   format allows for packetization of one or more Network Abstraction
+   Layer  (NAL)  units  in  each  RTP  packet  payload,  as  well  as
+   fragmentation of a NAL unit into multiple RTP packets.  Furthermore,
+   it supports transmission of an HEVC stream over a single as well as
+   multiple RTP flows. The payload format has wide applicability in
+   videoconferencing,  Internet  video  streaming,  and  high  bit-rate
+   entertainment-quality video, among others.
+
+
+
+Table of Contents
+
+   Status of this Memo ............................................ <a href="#page-1">1</a>
+   Abstract ....................................................... <a href="#page-3">3</a>
+   Table of Contents .............................................. <a href="#page-3">3</a>
+   <a href="#section-1">1</a> . Introduction ............................................... <a href="#page-5">5</a>
+      <a href="#section-1.1">1.1</a> . The HEVC Codec......................................... <a href="#page-5">5</a>
+         <a href="#section-1.1.1">1.1.1</a> Overview ........................................... <a href="#page-5">5</a>
+         <a href="#section-1.1.2">1.1.2</a> Parallel Processing Support ........................ <a href="#page-6">6</a>
+         <a href="#section-1.1.3">1.1.3</a> Parameter Sets ..................................... <a href="#page-9">9</a>
+         <a href="#section-1.1.4">1.1.4</a>  NAL Unit Header ................................... <a href="#page-9">9</a>
+      <a href="#section-1.2">1.2</a> . Overview of the Payload Format ....................... <a href="#page-11">11</a>
+   <a href="#section-2">2</a> . Conventions ............................................... <a href="#page-12">12</a>
+   <a href="#section-3">3</a> . Definitions and Abbreviations ............................. <a href="#page-12">12</a>
+      <a href="#section-3.1">3.1</a> Definitions ............................................ <a href="#page-12">12</a>
+         <a href="#section-3.1.1">3.1.1</a> Definitions from the HEVC Specification ........... <a href="#page-12">12</a>
+         <a href="#section-3.1.2">3.1.2</a> Definitions Specific to This Memo ................. <a href="#page-13">13</a>
+      <a href="#section-3.2">3.2</a> Abbreviations .......................................... <a href="#page-14">14</a>
+   <a href="#section-4">4</a> . RTP Payload Format ........................................ <a href="#page-14">14</a>
+      <a href="#section-4.1">4.1</a> RTP Header Usage........................................ <a href="#page-14">14</a>
+      <a href="#section-4.2">4.2</a> NAL Unit Header Usage .................................. <a href="#page-16">16</a>
+      <a href="#section-4.3">4.3</a> Payload Structures ..................................... <a href="#page-16">16</a>
+      <a href="#section-4.4">4.4</a> Transmission Modes ..................................... <a href="#page-17">17</a>
+      <a href="#section-4.5">4.5</a> Packetization Modes .................................... <a href="#page-17">17</a>
+      <a href="#section-4.6">4.6</a> Decoding Order ......................................... <a href="#page-18">18</a>
+      <a href="#section-4.7">4.7</a> Aggregation Packets .................................... <a href="#page-20">20</a>
+         <a href="#section-4.7.1">4.7.1</a> Single Time Aggregation Packet (STAP) ............. <a href="#page-21">21</a>
+      <a href="#section-4.8">4.8</a> Fragmentation Units (FUs) .............................. <a href="#page-24">24</a>
+   <a href="#section-5">5</a> . Packetization Rules........................................ <a href="#page-27">27</a>
+      <a href="#section-5.1">5.1</a> Common Packetization Rules ............................. <a href="#page-28">28</a>
+      <a href="#section-5.2">5.2</a> Non-Interleaved mode ................................... <a href="#page-29">29</a>
+      <a href="#section-5.3">5.3</a> Interleaved mode........................................ <a href="#page-29">29</a>
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                 [Page 3]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-4" id="page-4" href="#page-4" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   <a href="#section-6">6</a> . De-Packetization Process .................................. <a href="#page-29">29</a>
+      <a href="#section-6.1">6.1</a> Non-Interleaved Mode ................................... <a href="#page-29">29</a>
+      <a href="#section-6.2">6.2</a> Interleaved Mode........................................ <a href="#page-30">30</a>
+         <a href="#section-6.2.1">6.2.1</a> Size of the De-interleaving Buffer ................ <a href="#page-30">30</a>
+         <a href="#section-6.2.2">6.2.2</a> De-interleaving Process  .......................... <a href="#page-31">31</a>
+      <a href="#section-6.3">6.3</a> Additional De-Packetization Guidelines ................. <a href="#page-32">32</a>
+   <a href="#section-7">7</a> . Payload Format Parameters ................................. <a href="#page-33">33</a>
+      <a href="#section-7.1">7.1</a> Media Type Registration ................................ <a href="#page-33">33</a>
+      <a href="#section-7.2">7.2</a> SDP Parameters ......................................... <a href="#page-41">41</a>
+         <a href="#section-7.2.1">7.2.1</a> Mapping of Payload Type Parameters to SDP ......... <a href="#page-41">41</a>
+         <a href="#section-7.2.2">7.2.2</a> Usage with the SDP Offer/Answer Model ............. <a href="#page-41">41</a>
+         <a href="#section-7.2.3">7.2.3</a> Usage with SDP Offer/Answer Model ................. <a href="#page-42">42</a>
+         <a href="#section-7.2.4">7.2.4</a> Usage in Declarative Session Descriptions ......... <a href="#page-42">42</a>
+         <a href="#section-7.2.5">7.2.5</a> Signaling of Parallel Processing .................. <a href="#page-42">42</a>
+      <a href="#section-7.3">7.3</a> Examples ............................................... <a href="#page-42">42</a>
+      <a href="#section-7.4">7.4</a> Parameter Set Considerations ........................... <a href="#page-42">42</a>
+   <a href="#section-8">8</a> . Security Considerations ................................... <a href="#page-42">42</a>
+   <a href="#section-9">9</a> . Congestion Control ........................................ <a href="#page-42">42</a>
+   <a href="#section-10">10</a> . IANA Consideration........................................ <a href="#page-42">42</a>
+   <a href="#section-11">11</a> . Informative Appendix: Application Examples ............... <a href="#page-42">42</a>
+      <a href="#section-11.1">11.1</a> Introduction .......................................... <a href="#page-42">42</a>
+      <a href="#section-11.2">11.2</a> Streaming ............................................. <a href="#page-43">43</a>
+      11.3 Videoconferencing (Unicast to MANE, Unicast to Endpoints)43
+      <a href="#section-11.4">11.4</a> Mobile TV (Multicast to MANE, Unicast to Endpoint) .... <a href="#page-43">43</a>
+   <a href="#section-12">12</a> . Acknowledgements ......................................... <a href="#page-43">43</a>
+   <a href="#section-13">13</a> . References ............................................... <a href="#page-43">43</a>
+      <a href="#section-13.1">13.1</a> Normative References .................................. <a href="#page-43">43</a>
+      <a href="#section-13.2">13.2</a> Informative References ................................ <a href="#page-44">44</a>
+   <a href="#section-14">14</a> . Authors' Addresses........................................ <a href="#page-44">44</a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                 [Page 4]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-5" id="page-5" href="#page-5" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+<span class="h2"><a class="selflink" name="section-1" href="#section-1">1</a>. Introduction</span>
+
+<span class="h3"><a class="selflink" name="section-1.1" href="#section-1.1">1.1</a>. The HEVC Codec</span>
+
+<span class="h4"><a class="selflink" name="section-1.1.1" href="#section-1.1.1">1.1.1</a> Overview</span>
+
+   High Efficiency Video Coding [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>] is a forthcoming video coding
+   standard under development by the Joint Collaborative Team on Video
+   Coding (JCT-VC) formed by the ITU-T and ISO/IEC. It is reported to
+   provide significantly coding efficiency gains over H.264 [<a href="#ref-H.264" title="&quot;Advanced video coding for generic audiovisual services&quot;">H.264</a>].
+   The standard, once ratified, will officially be known asas ISO/IEC
+   23008-2, informally as MPEG H Part 2. ITU-T may decide soon on the
+   final recommendation number.
+
+   As both H.264 [<a href="#ref-H.264" title="&quot;Advanced video coding for generic audiovisual services&quot;">H.264</a>] and its RTP payload format [<a href="./rfc6184" title="&quot;RTP Payload Format for H.264 Video&quot;">RFC6184</a>] are
+   widely deployed and generally known in the relevant implementer
+   community, we frequently highlight only the differences to those two
+   specifications in non-normative, explanatory parts of this memo.
+   Basic  familiarity  with  both  specifications  is  assumed.    The
+   normative parts of this memo do not require study of H.264 or its
+   payload format.
+
+   H.264  and  HEVC  share  a  similar  hybrid  video  codec  design.
+   Conceptually, both technologies include a video coding layer (VCL),
+   and a network abstraction layer (NAL).
+
+   The VCL of HEVC includes a prediction stage that involves motion
+   compensation  and  spatial  intra-prediction,  integer  transforms
+   applied to prediction residuals, and an entropy coding stage that
+   uses an arithmetic coding. As in H.264, in-loop deblocking filtering
+   is applied to the reconstructed picture.
+
+   An important difference of HEVC compared to H.264 is the coding
+   structure within a picture. In HEVC each picture is divided into
+   treeblocks  of  up  to  64x64  luma  samples.    Treeblocks  can  be
+   recursively split into smaller Coding Units (CUs) using a generic
+   quad-tree segmentation structure. CUs can be further split into
+   Prediction Units (PUs) used for intra- and inter-prediction and
+   Transform Units (TUs) defined for transform and quantization.  HEVC
+   includes integer transforms for a number of TU sizes.  HEVC also
+   includes a new in-loop filter known as Sample Adaptive Offset (SAO)
+   that may be applied after the deblocking filtering.
+
+   On  random  accessibility  provisioning,  HEVC  introduces  besides
+   Instantaneous Decoder Refresh (IDR) pictures a Clean Random Access
+   (CRA) picture, which is similar to what has been conventionally
+   called open Group-of-Pictures (GOP) intra picture.  Compared to
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                 [Page 5]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-6" id="page-6" href="#page-6" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   H.264 wherein a CRA picture may be signalled using a recovery point
+   Supplemental  Enhancement  Information  (SEI)  message,  in  HEVC  a
+   distinct NAL unit type is used for indication of a CRA picture.
+   Furthermore, HEVC specifies that a conforming bitstream may start
+   with a CRA picture, compared to in H.264 a conforming must start
+   with an IDR picture.
+
+   Temporal layer access (TLA) pictures were introduced in HEVC to
+   indicate temporal layer switching points.
+
+   Predictively  coded  pictures  can  include  uni-predicted  and  bi-
+   predicted slices.  The flexibility in creating picture coding
+   structures is roughly comparable to H.264.
+
+   The VCL generates and consumes syntax structures designed to be
+   adaptable to MTU sizes commonly found in IP networks, irrespective
+   of the size of a coded picture.  Picture segmentation is achieved
+   through slices.  The Network Adaptation Layer (NAL) is responsible
+   for information required to the decoding process of more than one
+   slice, which are collected in parameter sets.  A number of data
+   structures not strictly required for the decoding process, but
+   potentially helpful in decoding systems can be conveyed in data
+   structures  such  as  Supplementary  Enhancement  Information  (SEI)
+   messages, Access unit delimiters, and so on.
+
+   All the aforementioned MTU-sized (or smaller) data structures are
+   available in the form of Network Adaptation Layer Units.
+
+   The single distinguishing difference between HEVC and H.264 with
+   respect to the RTP payload format design is the availability of VCL-
+   based coding tools that are specifically designed to enable
+   processing on high-level parallel architectures.  These tools are
+   described below in sufficient detail to provide motivation for the
+   parallel processing signaling support that is described in <a href="#section-7.2.5">section</a>
+   <a href="#section-7.2.5">7.2.5</a>.
+
+<span class="h4"><a class="selflink" name="section-1.1.2" href="#section-1.1.2">1.1.2</a> Parallel Processing Support</span>
+
+   The reportedly significantly higher computational demand of HEVC
+   over H.264 (especially with respect to encoders), in conjunction
+   with the ever increasing video resolution (both spatially and
+   temporally) required by the market, led to the adoption of VCL
+   coding tools specifically targeted to allow for parallelization on
+   the sub-picture level.  That is, parallelization occurs, at the
+   minimum, at the granularity of an integer number of treeblocks. The
+   targets for this type of high-level parallelization are multicore
+   CPUs and DSPs as well as multiprocessor systems.  In a system
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                 [Page 6]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-7" id="page-7" href="#page-7" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   design, to be useful, these tools require signaling support, which
+   is provided in <a href="#section-7.2.5">section 7.2.5</a> of this memo.  This section provides a
+   brief overview of the tools available in [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>].  This section is
+   expected to be updated frequently as the HEVC draft evolves.
+
+
+
+   For  parallelization,  four  picture  partition  strategies  are
+   available.
+
+   Regular  slices  are  segments  of  the  bitstream  that  can  be
+   reconstructed independently from other regular slices within the
+   same picture (though there may still be interdependencies through
+   loop filtering operations).  Regular slices are the only tool that
+   can be used for parallelization that is also available, in virtually
+   identical form, in H.264.  Regular slices based parallelization does
+   not require much inter-processor or inter-core communication (except
+   for  inter-processor  or  inter-core  data  sharing  for  motion
+   compensation when decoding a predictively coded picture, which is
+   typically much heavier than inter-processor or inter-core data
+   sharing due to in-picture prediction), as slices are designed to be
+   independently decodable.  However, for the same reason, regular
+   slices can require some coding overhead.  Further, regular slices
+   (in contrast to some of the other tools mentioned below) also serve
+   as the key mechanism for bitstream partitioning to match MTU size
+   requirements, due to the in-picture independence of regular slices
+   and that each regular slice is encapsulated in its own NAL unit.  In
+   many cases, the goal of parallelization and the goal of MTU size
+   matching can place contradicting demands to the slice layout in a
+   picture.  The realization of this situation led to the development
+   of the more advanced tools mentioned below.  This payload format
+   does not contain any specific mechanisms aiding parallelization
+   through regular slices.
+
+   Dependent slices allow for the fragmentation of a coded bitstream
+   into fragments at treeblock boundaries, without breaking any in-
+   picture  prediction  mechanism.    They  are  complimentary  to  the
+   fragmentation mechanism described in this memo in that they need the
+   cooperation of the encoder, or parsing of the slice header in a
+   Media Aware Network Element (MANE) so to identify coded treeblock
+   boundaries and enable byte alignment.  A dependent slice necessarily
+   contains an integer number of coded treeblocks, a decoder using
+   multiple cores operating on treeblocks can process a dependent slice
+   if  entropy  and  intra/inter  coding  information  from  preceding
+   treeblocks is available.  Fragmentation, as specified in this memo,
+   in contrast, does not guarantee that a fragment contains an integer
+   number of treeblocks.
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                 [Page 7]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-8" id="page-8" href="#page-8" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   In Wavefront Parallel Processing, the picture is partitioned into
+   rows of treeblocks.  Entropy decoding and prediction are allowed to
+   use data from treeblocks in other partitions.  Parallel processing
+   is possible through parallel decoding of rows of treeblocks, where
+   the start of the decoding of a row is delayed by two treeblocks, so
+   to ensure that data related to a treeblock above and to the right of
+   the subject treeblock is available before the subject treeblock is
+   being decoded.  Using this staggered start (which appears like a
+   wavefront when represented graphically), parallelization is possible
+   with  up  to  as  many  processors/cores  as  the  picture  contains
+   treeblock rows.
+
+   Because in-picture prediction between neighboring treeblock rows
+   within a picture is allowed, the required inter-processor/inter-core
+   communication to enable in-picture prediction can be substantial.
+   The wavefront parallel processing partitioning does not result into
+   more NAL units compared to when it is not applied, thus wavefront
+   parallel processing may be also used for MTU size matching in case
+   of using dependent slices.
+
+   Tiles define horizontal and vertical boundaries that partition a
+   picture into tile columns and rows.  The scan order of treeblocks is
+   changed to be local within a tile (in the order of a treeblock
+   raster can of a tile), before decoding the top-left treeblock of the
+   next tile in the order of tile raster scan of a picture.  Similar to
+   regular  slices,  tiles  break  in-picture  prediction  dependencies
+   (including entropy decoding dependencies).  However, they do not
+   need to be included into individual NAL units (same as wavefront
+   parallel processing in this regard), hence tiles cannot be used for
+   MTU  size  matching.    Each  tile  can  be  processed  by  one
+   processor/core,  and  the  inter-processor/inter-core  communication
+   required for in-picture prediction between processing units decoding
+   neighboring tiles is limited to conveying the shared slice header in
+   cases a slice is spanning more than one tile, and loop filtering
+   related sharing of reconstructed samples and metadata.  Insofar,
+   tiles are less demanding in terms of memory bandwidth compared to
+   WPP due to the in-picture independence between two neighboring
+   partitions.  Tiles are included in the (single) existing profile of
+   [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>] and the support in the context of this memo will be specified
+   in <a href="#section-7">section 7</a> of this memo.
+
+   The interaction between regular slices and tiles is simplified by
+   constraints of the HEVC draft.  Specifically, for each slice and
+   tile, either or both of the following conditions must be fulfilled:
+   1) all coded treeblocks in a slice belong to the same tile; 2) all
+   coded treeblocks in a tile belong to the same slice.
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                 [Page 8]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-9" id="page-9" href="#page-9" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+<span class="h4"><a class="selflink" name="section-1.1.3" href="#section-1.1.3">1.1.3</a> Parameter Sets</span>
+
+   The  parameter  set  concept  is  borrowed  from  [<a href="#ref-H.264" title="&quot;Advanced video coding for generic audiovisual services&quot;">H.264</a>]  with  no
+   conceptual changes.  In addition to Sequence Parameter Sets (SPS),
+   carrying data valid to the whole video sequence, and Picture
+   Parameter Sets (PPS), carrying information valid on a picture by
+   picture base, the new Video Parameter Set (VPS) has been introduced.
+   At the time of writing, the VPS includes information about maximum
+   profile and level as well as information related to temporal
+   scalability and Hypothetical Reference Decoder (HRD) parameters.
+   For the HEVC extensions for scalable (SHVC) and 3D coding, the VPS
+   is planned to also convey information about non-temporal layer
+   dependency, and related side information.
+
+<span class="h4"><a class="selflink" name="section-1.1.4" href="#section-1.1.4">1.1.4</a> NAL Unit Header</span>
+
+   HEVC maintains the NAL unit concept of H.264 with modifications.
+   HEVC uses a two byte NAL unit header.  Table 1 lists the allocation
+   of NAL unit types for VCL NAL units and non-VCL NAL units.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                 [Page 9]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-10" id="page-10" href="#page-10" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+                   Table 1.  NAL unit types in HEVC
+
+
+   Values marked as "Unspecified" are intended for use by
+   specifications other than HEVC, for example by this RTP payload
+   format.
+
+      Type  NAL Unit Name                          NAL unit type class
+      ----------------------------------------------------------------
+       0  TRAIL_N  Coded slice seg. of a non-TSA ,non-STSA trailing
+                                                          picture  VCL
+       1  TRAIL_R  Coded slice seg. of a non-TSA, non-STSA trailing
+                                                           picture VCL
+       2  TSA_N    Coded slice segment of a TSA picture            VCL
+       3  TSA_R    Coded slice segment of a TSA pictur             VCL
+       4  STSA_N   Coded slice segment of an STSA picture          VCL
+       5  STSA_R   Coded slice segment of an STSA picture          VCL
+       6  RADL_N   Coded slice segment of an RADL picture          VCL
+       7  RADL_R   Coded slice segment of an RADL picture          VCL
+       8  RASL_N   Coded slice segment of an RASL picture          VCL
+       9  RASL_R   Coded slice segment of an RASL picture          VCL
+      10,12,14 RSV_VCL_N10, ..N12, ..N14   Reserved N VCL          VCL
+      11,13,15 RSV_VCL_R11, ..R13, ..R15   Reserved R VCL          VCL
+      16  BLA W TFD Coded slice segment of a BLA picture           VCL
+      17  BLA W DLP Coded slice segment of a BLA picture           VCL
+      18  BLA N LP  Coded slice segment of a BLA picture           VCL
+      19  IDR W LP  Coded slice segment of an IDR picture          VCL
+      20  IDR N LP  Coded slice segment of an IDR picture          VCL
+      21  CRA_NUT  Coded slice segment of a CRA picture            VCL
+      22..23 RSV_RAP_VCL22, RSV_RAP_VCL23   Reserved RAP           VCL
+      24..31  RSV  NVCL24..NVCL31   Reserved VCL                   VCL
+      32  VPS NUT  Video parameter set                         non-VCL
+      33  SPS NUT  Sequence parameter set                      non-VCL
+      34  PPS NUT  Picture parameter set                       non-VCL
+      35  AUD NUT  Access unit delimiter                       non-VCL
+      36  EOS NUT  End of sequence                             non-VCL
+      37  EOB NUT  End of bitsteam                             non-VCL
+      38  FD  NUT  Filler data                                 non-VCL
+      39  PREFIX_SEI_NUT  Prefix Supplemental enhancement information
+                                                        (SEI)  non-VCL
+      40  SUFIX_SEI_NUT  Suffix Supplemental enhancement information
+                                                        (SEI)  non-VCL
+      41..47  RSV_NVCL41..NVCL47 Reserved                      non-VCL
+      48..63  UNSPEC48..UNSPEC63 Unspecified                   non-VCL
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 10]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-11" id="page-11" href="#page-11" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   The syntax and semantics of the NAL unit header are specified in
+   [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>], but the essential properties of the NAL unit header are
+   summarized below for convenience.
+
+         +---------------+---------------+
+         |0|1|2|3|4|5|6|7|0|1|2|3|4|5|6|7|
+         +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+         |F|   Type    |     R     | TID |
+         +-------------+-----------------+
+
+   The semantics of the components of the NAL unit type octets, as
+   specified in [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>], are described briefly below.  In addition to
+   the name and size of each field, the corresponding syntax element
+   name in [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>] is also provided.
+
+   F: 1 bit
+      forbidden_zero_bit.  MUST be zero.  HEVC declares a value of 1 as
+      a syntax violation.  Note: the bit is wasted for compatibility
+      with MPEG-2 transport systems.
+
+   Type: 6 bits
+      nal_unit_type.  This component specifies the NAL unit type as
+      defined in Table 7-1 of [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>], and in Table 1 in this memo.  For
+      a reference of all currently defined NAL unit types and their
+      semantics, please refer to Section 7.4.1 in [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>].
+
+   R: 6 bits
+      reserved_6 bits.  Reserved bits for future extension (such as
+      scalability and three-dimension video extensions).  R MUST be
+      equal to "000000" (in binary form).
+
+   TID: 3 bits
+      temporal_id.  This component indicates the temporal identifier of
+      the NAL unit in the coded sequence, plus 1.  A TID value of 0 is
+      illegal to prevent start code emulations in MPEG-2 systems.
+
+   This memo extends the semantics of F and TID, as described in
+   <a href="#section-4.2">Section 4.2</a>.
+
+<span class="h3"><a class="selflink" name="section-1.2" href="#section-1.2">1.2</a>. Overview of the Payload Format</span>
+
+   This payload format defines the following processes required for
+   transport of HEVC coded data over RTP [<a href="./rfc3550" title="&quot;RTP: A Transport Protocol for Real-Time Applications&quot;">RFC3550</a>]:
+
+   o Usage of RTP header with this payload format
+
+   o Packetization of HEVC coded NAL units into RTP packets
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 11]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-12" id="page-12" href="#page-12" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   o Transmission of HEVC NAL units of the same bitstream within a
+      single RTP session
+
+   o Payload format parameters to be used within the Session
+      Description Protocol (SDP) [<a href="./rfc4566" title="&quot;SDP: Session Description Protocol&quot;">RFC4566</a>].
+
+<span class="h2"><a class="selflink" name="section-2" href="#section-2">2</a>. Conventions</span>
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in <a href="./bcp14">BCP 14</a>, <a href="./rfc2119">RFC 2119</a>
+   [<a href="./rfc2119" title="&quot;Key words for use in RFCs to Indicate Requirement Levels&quot;">RFC2119</a>].
+
+   This specification uses the notion of setting and clearing a bit
+   when bit fields are handled.  Setting a bit is the same as assigning
+   that bit the value of 1 (On).  Clearing a bit is the same as
+   assigning that bit the value of 0 (Off).
+
+<span class="h2"><a class="selflink" name="section-3" href="#section-3">3</a>. Definitions and Abbreviations</span>
+
+<span class="h3"><a class="selflink" name="section-3.1" href="#section-3.1">3.1</a> Definitions</span>
+
+   This document uses the terms and definitions of [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>].  <a href="#section-3.1.1">Section</a>
+   <a href="#section-3.1.1">3.1.1</a> lists relevant definitions copied from [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>] for convenience.
+   <a href="#section-3.1.2">Section 3.1.2</a> gives definitions specific to this memo.
+
+<span class="h4"><a class="selflink" name="section-3.1.1" href="#section-3.1.1">3.1.1</a> Definitions from the HEVC Specification</span>
+
+      access unit: A set of NAL units that are consecutive in decoding
+      order and contain exactly one coded picture. In addition to the
+      coded slice NAL units of the coded picture, the access unit may
+      also contain other NAL units not containing slices of the coded
+      picture.  The decoding of an access unit always results in a
+      decoded picture.
+
+      dependent slice segment: A slice segment for which the values of
+      some syntax elements of the slice segment header are inferred
+      from the values for the preceding independent slice segment in
+      decoding order.
+
+      coded video sequence: A sequence of access units that consists,
+      in decoding order, of a CRA access unit that is the first access
+      unit in the bitstream, an IDR access unit or a BLA access unit,
+      followed by zero or more non-IDR and non-BLA access units
+      including all subsequent access units up to but not including any
+      independent slice segment: A slice segment for which the values
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 12]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-13" id="page-13" href="#page-13" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+      of the syntax elements of the slice segment header are not
+      inferred from the values for a preceding slice segment.
+
+      slice: An integer number of coding tree units contained in one
+      independent slice segment and all subsequent dependent slice
+      segments (if any) that precede the next independent slice segment
+      (if any) within the same access unit.
+
+      slice segment: An integer number of coding tree blocks units
+      ordered consecutively in the tile scan and contained in a single
+      NAL unit; t. The division of each picture into slice segments is
+      a partitioning.
+
+      subsequent IDR or BLA access unit.CRA access unit: An access unit
+      in which the coded picture is a CRA picture.CRA picture: A RAP
+      picture for which each slice has nal_unit_type equal to
+      CRA_NUT.IDR access unit: An access unit in which the coded
+      picture is an IDR picture.IDR picture: A RAP picture for which
+      each slice has nal_unit_type equal to IDR_W_LP or IDR_N_LP.Random
+      Access: The act of starting the decoding process for a bitstream
+      at a point other than the beginning of the stream.
+
+      RAP access unit: An access unit in which the coded picture is a
+      RAP picture.
+
+      RAP picture: A coded picture containing only I slices and for
+      which each slice has nal_unit_type in the range of 7 to 12,
+      inclusive.
+
+      tile: An integer number of coding tree blocks co-occurring in one
+      column and one row, ordered consecutively in coding tree block
+      raster scan of the tile. The division of each picture into tiles
+      is a partitioning. Tiles in a picture are ordered consecutively
+      in tile raster scan of the picture.
+
+<span class="h4"><a class="selflink" name="section-3.1.2" href="#section-3.1.2">3.1.2</a> Definitions Specific to This Memo</span>
+
+      media aware network element (MANE): A network element, such as a
+      middlebox or application layer gateway that is capable of parsing
+      certain aspects of the RTP payload headers or the RTP payload and
+      reacting to their contents.
+
+         Informative note: The concept of a MANE goes beyond normal
+         routers or gateways in that a MANE has to be aware of the
+         signaling (e.g., to learn about the payload type mappings of
+         the media streams), and in that it has to be trusted when
+         working with SRTP.  The advantage of using MANEs is that they
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 13]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-14" id="page-14" href="#page-14" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+         allow packets to be dropped according to the needs of the
+         media coding.  For example, if a MANE has to drop packets due
+         to congestion on a certain link, it can identify and remove
+         those packets whose elimination produces the least adverse
+         effect on the user experience.  After dropping packets, MANEs
+         must rewrite RTCP packets to match the changes to the RTP
+         packet stream as specified in <a href="./rfc3550#section-7">Section&nbsp;7 of [RFC3550]</a>.
+
+      NAL unit decoding order: A NAL unit order that conforms to the
+      constraints on NAL unit order given in Section 7.4.1.2.3 in
+      [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>].
+
+      NALU-time: The value that the RTP timestamp would have if the NAL
+      unit would be transported in its own RTP packet.
+
+      RTP packet stream: A sequence of RTP packets with increasing
+      sequence numbers (except for wrap-around), identical PT and
+      identical SSRC (Synchronization Source), carried in one RTP
+      session.  Within the scope of this memo, one RTP packet stream is
+      utilized to transport one or more layers.
+
+      transmission order: The order of packets in ascending RTP
+      sequence number order (in modulo arithmetic).  Within an
+      aggregation packet, the NAL unit transmission order is the same
+      as the order of appearance of NAL units in the packet.
+
+<span class="h3"><a class="selflink" name="section-3.2" href="#section-3.2">3.2</a> Abbreviations</span>
+
+   TBD
+
+<span class="h2"><a class="selflink" name="section-4" href="#section-4">4</a>. RTP Payload Format</span>
+
+<span class="h3"><a class="selflink" name="section-4.1" href="#section-4.1">4.1</a> RTP Header Usage</span>
+
+   The format of the RTP header is specified in [<a href="./rfc3550" title="&quot;RTP: A Transport Protocol for Real-Time Applications&quot;">RFC3550</a>] and reprinted
+   in Figure 1 for convenience.  This payload format uses the fields of
+   the header in a manner consistent with that specification.
+
+   The RTP payload (and the settings for some RTP header bits) for
+   aggregation packets and fragmentation units are specified in
+   Sections <a href="#section-4.6">4.6</a> and <a href="#section-4.8">4.8</a>, respectively.
+
+
+
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 14]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-15" id="page-15" href="#page-15" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |V=2|P|X|  CC   |M|     PT      |       sequence number         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                           timestamp                           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |           synchronization source (SSRC) identifier            |
+   +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+
+   |            contributing source (CSRC) identifiers             |
+   |                             ....                              |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                Figure 1 RTP header according to [<a href="./rfc3550" title="&quot;RTP: A Transport Protocol for Real-Time Applications&quot;">RFC3550</a>]
+
+
+
+   The RTP header information to be set according to this RTP payload
+   format is set as follows:
+
+   Marker bit (M): 1 bit
+
+     Set for the last packet of the access unit indicated by the RTP
+      timestamp, in line with the normal use of the M bit in video
+      formats, to allow an efficient playout buffer handling.  For
+      aggregation packets (STAP), the marker bit in the RTP header MUST
+      be set to the value that the marker bit of the last NAL unit of
+      the aggregation packet would have been if it were transported in
+      its own RTP packet.  Decoders MAY use this bit as an early
+      indication of the last packet of an access unit but MUST NOT rely
+      on this property.
+
+         Informative note: Only one M bit is associated with an
+         aggregation packet carrying multiple NAL units.  Thus, if a
+         gateway has re-packetized an aggregation packet into several
+         packets, it cannot reliably set the M bit of those packets.
+
+   Payload type (PT): 7 bits
+
+      The assignment of an RTP payload type for this new packet format
+      is outside the scope of this document and will not be specified
+      here.  The assignment of a payload type has to be performed
+      either through the profile used or in a dynamic way.
+
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 15]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-16" id="page-16" href="#page-16" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   Sequence number (SN): 16 bits
+
+      Set and used in accordance with <a href="./rfc3550">RFC 3550</a>.  In some packetization
+      modes (list TBD), the sequence number is used to determine
+      decoding order for the NALUs.
+
+   Timestamp: 32 bits
+
+      The RTP timestamp is set to the sampling timestamp of the
+      content. A 90 kHz clock rate MUST be used.
+
+      If the NAL unit has no timing properties of its own (e.g.,
+      parameter set and SEI NAL units), the RTP timestamp is set to the
+      RTP timestamp of the coded picture of the access unit in which
+      the NAL unit is included, according to Section 7.4.1.2.3 of
+      [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>].
+
+      Receivers SHOULD ignore any picture timing SEI messages included
+      in access units that have only one display timestamp.  Instead,
+      receivers SHOULD use the RTP timestamp for synchronizing the
+      display process.  If one access unit has more than one display
+      timestamp carried in a picture timing SEI message, then the
+      information in the SEI message SHOULD be treated as relative to
+      the RTP timestamp, with the earliest event occurring at the time
+      given by the RTP timestamp and subsequent events later, as given
+      by the difference in picture time values carried in the picture
+      timing SEI message.  Let tSEI1, tSEI2, ..., tSEIn be the display
+      timestamps carried in the SEI message of an access unit, where
+      tSEI1 is the earliest of all such timestamps.  Let tmadjst() be a
+      function that adjusts the SEI messages time scale to a 90-kHz
+      time scale.  Let TS be the RTP timestamp.  Then, the display time
+      for the event associated with tSEI1 is TS.  The display time for
+      the event with tSEIx, where x is [2..n], is TS + tmadjst (tSEIx -
+      tSEI1).
+
+<span class="h3"><a class="selflink" name="section-4.2" href="#section-4.2">4.2</a> NAL Unit Header Usage</span>
+
+   The structure and semantics of the NAL unit header according to the
+   HEVC specification [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>] were introduced in <a href="#section-1.1.4">Section 1.1.4</a>.  This
+   section specifies the extended semantics of the NAL unit header
+   fields.
+
+<span class="h3"><a class="selflink" name="section-4.3" href="#section-4.3">4.3</a> Payload Structures</span>
+
+   The NAL unit structure is central to HEVC [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>], all HEVC coded
+   bits for representing a video signal are encapsulated in NAL units.
+   Therefore each RTP packet payload is structured as a NAL unit, which
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 16]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-17" id="page-17" href="#page-17" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   contains one or a part of one NAL unit specified in HEVC, or
+   aggregates one or more NAL units specified in HEVC.
+
+<span class="h3"><a class="selflink" name="section-4.4" href="#section-4.4">4.4</a> Transmission Modes</span>
+
+   This memo enables transmission of an HEVC bitstream over a single
+   RTP session or multiple RTP sessions.
+
+<span class="h3"><a class="selflink" name="section-4.5" href="#section-4.5">4.5</a> Packetization Modes</span>
+
+   This memo specifies the following packetization modes:
+
+   o Non-interleaved mode
+
+   o Interleaved mode
+
+   In the non-interleaved mode, NAL units are transmitted in NAL unit
+   decoding order. The interleaved mode allows transmission of NAL
+   units outside of NAL unit decoding order.
+
+   The packetization mode in use MAY be signaled by the value of the
+   OPTIONAL packetization-mode media type parameter.  The used
+   packetization mode governs which NAL unit types are allowed in RTP
+   payloads.  Table 2 summarizes the allowed packet payload types for
+   each packetization mode.  Packetization modes are explained in more
+   detail in <a href="#section-6">section 6</a>.
+
+     Table 2.  Summary of allowed NAL unit types for each packetization
+             mode (yes = allowed, no = disallowed, ig = ignore)
+
+      Payload Packet      Non-Interleaved    Interleaved
+      Type    Type              Mode             Mode
+      -------------------------------------------------
+      0      reserved           ig               ig
+      1-47   NAL unit          yes               no
+      48     STAP-A            yes               no
+      49     STAP-B             no              yes
+      50     FU-A              yes              yes
+      51     FU-B               no              yes
+      52-63  reserved           ig               ig
+
+   Some NAL unit or payload type values (indicated as reserved in
+   Table 2) are reserved for future extensions.  NAL units of those
+   types SHOULD NOT be sent by a sender (direct as packet payloads, or
+   as aggregation units in aggregation packets, or as fragmented units
+   in FU packets), MUST be ignored by a receiver, and SHOULD be
+   forwarded unchanged by a MANE.
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 17]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-18" id="page-18" href="#page-18" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   For example, the payload types 1-47, with the associated packet type
+   "NAL unit", are allowed in "Non-Interleaved Mode", but disallowed in
+   "Interleaved Mode".  However, NAL units of NAL unit types 1-47 can
+   be used in "Interleaved Mode" as aggregation units in STAP-B packets
+   as well as fragmented units in FU-A and FU-B packets.  Similarly,
+   NAL units of NAL unit types 1-47 can also be used in the "Non-
+   Interleaved Mode" as aggregation units in STAP-A packets or
+   fragmented units in FU-A packets, in addition to being directly used
+   as packet payloads.
+
+<span class="h3"><a class="selflink" name="section-4.6" href="#section-4.6">4.6</a> Decoding Order</span>
+
+   In the interleaved packetization mode, the transmission order of NAL
+   units is allowed to differ from the decoding order of the NAL units.
+   Decoding order number (DON) is a field in the payload structure or a
+   derived variable that indicates the NAL unit decoding order.
+   Rationale and examples of use cases for transmission out of decoding
+   order and for the use of DON are given in <a href="#section-13">section 13</a>.
+
+   The coupling of transmission and decoding order is controlled by the
+   OPTIONAL sprop-interleaving-depth media type parameter as follows.
+   When the value of the OPTIONAL sprop-interleaving-depth media type
+   parameter is equal to 0 (explicitly or per default), the
+   transmission order of NAL units MUST conform to the NAL unit
+   decoding order.  When the value of the OPTIONAL sprop-interleaving-
+   depth media type parameter is greater than 0,
+
+   o the order of NAL units generated by de-packetizing STAP-Bs, and
+      FUs in two consecutive packets is NOT REQUIRED to be the NAL unit
+      decoding order.
+
+   The RTP payload structures for an STAP-A, and an FU-A do not include
+   DON.  STAP-B and FU-B structures include DON.
+
+      Informative note: When an FU-A occurs in interleaved mode, it
+      always follows an FU-B, which sets its DON.
+
+      Informative note: If a transmitter wants to encapsulate a single
+      NAL unit per packet and transmit packets out of their decoding
+      order, STAP-B packet type can be used.
+
+   In the non-interleaved packetization mode, the transmission order of
+   NAL units in single NAL unit packets, STAP-As, and FU-As MUST be the
+   same as their NAL unit decoding order.  The NAL units within an STAP
+   MUST appear in the NAL unit decoding order.  Thus, the decoding
+   order is first provided through the implicit order within a STAP,
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 18]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-19" id="page-19" href="#page-19" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   and second provided through the RTP sequence number for the order
+   between STAPs, FUs, and single NAL unit packets.
+
+   Signaling of the value of DON for NAL units carried in STAP-B, and a
+   series of fragmentation units starting with an FU-B is specified in
+   sections <a href="#section-4.7.1">4.7.1</a>, and <a href="#section-4.8">4.8</a>, respectively.  The DON value of the first
+   NAL unit in transmission order MAY be set to any value.  Values of
+   DON are in the range of 0 to 65535, inclusive.  After reaching the
+   maximum value, the value of DON wraps around to 0.
+
+   The decoding order of two NAL units contained in any STAP-B, or a
+   series of fragmentation units starting with an FU-B is determined as
+   follows.  Let DON(i) be the decoding order number of the NAL unit
+   having index i in the transmission order.  Function don_diff(m,n) is
+   specified as follows:
+
+         If DON(m) == DON(n), don_diff(m,n) = 0
+
+         If (DON(m) &lt; DON(n) and DON(n) - DON(m) &lt; 32768),
+         don_diff(m,n) = DON(n) - DON(m)
+
+         If (DON(m) &gt; DON(n) and DON(m) - DON(n) &gt;= 32768),
+         don_diff(m,n) = 65536 - DON(m) + DON(n)
+
+         If (DON(m) &lt; DON(n) and DON(n) - DON(m) &gt;= 32768),
+         don_diff(m,n) = - (DON(m) + 65536 - DON(n))
+
+         If (DON(m) &gt; DON(n) and DON(m) - DON(n) &lt; 32768),
+         don_diff(m,n) = - (DON(m) - DON(n))
+
+   A positive value of don_diff(m,n) indicates that the NAL unit having
+   transmission order index n follows, in decoding order, the NAL unit
+   having transmission order index m.  When don_diff(m,n) is equal to
+   0, then the NAL unit decoding order of the two NAL units can be in
+   either order.  A negative value of don_diff(m,n) indicates that the
+   NAL unit having transmission order index n precedes, in decoding
+   order, the NAL unit having transmission order index m.
+
+   Values of the DON field MUST be such that the decoding order
+   determined by the values of DON, as specified above, conforms to the
+   NAL unit decoding order.  If the order of two NAL units in NAL unit
+   decoding order is switched and the new order does not conform to the
+   NAL unit decoding order, the NAL units MUST NOT have the same value
+   of DON.  If the order of two consecutive NAL units in the NAL unit
+   stream is switched and the new order still conforms to the NAL unit
+   decoding order, the NAL units MAY have the same value of DON.
+   Consequently, NAL units having the same value of DON can be decoded
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 19]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-20" id="page-20" href="#page-20" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   in any order, and two NAL units having a different value of DON
+   should be passed to the decoder in the order specified above.  When
+   two consecutive NAL units in the NAL unit decoding order have a
+   different value of DON, the value of DON for the second NAL unit in
+   decoding order SHOULD be the value of DON for the first, incremented
+   by one.
+
+   An example of the de-packetization process to recover the NAL unit
+   decoding order is given in <a href="#section-7">section 7</a>.
+
+      Informative note: Receivers should not expect that the absolute
+      difference of values of DON for two consecutive NAL units in the
+      NAL unit decoding order will be equal to one, even in error-free
+      transmission.  An increment by one is not required, as at the
+      time of associating values of DON to NAL units, it may not be
+      known whether all NAL units are delivered to the receiver.  For
+      example, a gateway may not forward coded slice NAL units of non-
+      reference pictures or SEI NAL units when there is a shortage of
+      bit rate in the network to which the packets are forwarded.  In
+      another example, a live broadcast is interrupted by pre-encoded
+      content, such as commercials, from time to time.  The first intra
+      picture of a pre-encoded clip is transmitted in advance to ensure
+      that it is readily available in the receiver.  When transmitting
+      the first intra picture, the originator does not exactly know how
+      many NAL units will be encoded before the first intra picture of
+      the pre-encoded clip follows in decoding order.  Thus, the values
+      of DON for the NAL units of the first intra picture of the pre-
+      encoded clip have to be estimated when they are transmitted, and
+      gaps in values of DON may occur.
+
+<span class="h3"><a class="selflink" name="section-4.7" href="#section-4.7">4.7</a> Aggregation Packets</span>
+
+   Aggregation packets are the NAL unit aggregation scheme of this
+   payload specification.  The scheme is introduced to enable the
+   reduction of packetization overhead for small NAL units, such as
+   most of the non-VCL NAL units (which are often only a few octets
+   long).
+
+   The Single-time aggregation packet (STAP) aggregates NAL units with
+   identical NALU-time.  Two types of STAPs are defined, one without
+   DON (STAP-A) and another including DON (STAP-B).
+
+   Each NAL unit to be carried in an aggregation packet is encapsulated
+   in an aggregation unit.  The structure of the RTP payload format for
+   aggregation packets is presented in Figure 2.
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 20]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-21" id="page-21" href="#page-21" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |F|   Type    |     R     | TID |                               |
+   +-------------+-----------------+                               |
+   |                                                               |
+   |             one or more aggregation units                     |
+   |                                                               |
+   |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               :...OPTIONAL RTP padding        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+            Figure 2 RTP payload format for aggregation packets
+
+   STAPs have the following packetization rules:  The type field of the
+   NAL unit type octet MUST be set to the appropriate value for STAP,
+   as indicated in Table 2.  The F bit MUST be cleared if all F bits of
+   the aggregated NAL units are zero; otherwise, it MUST be set.  The
+   value of R MUST be the lowest value of R of any aggregation unit's
+   R.
+
+   The marker bit in the RTP header is set to the value that the marker
+   bit of the last NAL unit of the aggregated packet would have if it
+   were transported in its own RTP packet.
+
+   The payload of an aggregation packet consists of one or more
+   aggregation units as described below in <a href="#section-4.7.1">section 4.7.1</a>.  An
+   aggregation packet can carry as many aggregation units as necessary;
+   however, the total amount of data in an aggregation packet obviously
+   MUST fit into an IP packet, and the size SHOULD be chosen so that
+   the resulting IP packet is smaller than the MTU size so to avoid IP
+   layer fragmentation.  An aggregation packet MUST NOT contain
+   fragmentation units specified in <a href="#section-4.8">section 4.8</a>.  Aggregation packets
+   MUST NOT be nested; i.e., an aggregation packet MUST NOT contain
+   another aggregation packet.
+
+
+
+<span class="h4"><a class="selflink" name="section-4.7.1" href="#section-4.7.1">4.7.1</a> Single Time Aggregation Packet (STAP)</span>
+
+   The payload of an STAP consists of at least one single-time
+   aggregation unit, with a format as presented in Figure 3. The
+   payload of an STAP-B consists of a 16-bit unsigned decoding order
+   number (DON) (in network byte order) followed by at least one
+   single-time aggregation unit, as presented in Figure 4.
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 21]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-22" id="page-22" href="#page-22" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+                   :                                               |
+   +-+-+-+-+-+-+-+-+                                               |
+   |                                                               |
+   |                single-time aggregation units                  |
+   |                                                               |
+   |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               :
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                    Figure 3 Payload format for STAP-A
+
+   0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+                   :  decoding order number (DON)  |               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+               |
+   |                                                               |
+   |                single-time aggregation units                  |
+   |                                                               |
+   |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               :
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                    Figure 4 Payload format for STAP-B
+
+   The DON field specifies the value of DON for the first NAL unit in
+   an STAP-B in transmission order.  For each successive NAL unit in
+   appearance order in an STAP-B, the value of DON is equal to (the
+   value of DON of the previous NAL unit in the STAP-B + 1) % 65536, in
+   which '%' stands for the modulo operation.
+
+   A single-time aggregation unit consists of 16-bit unsigned size
+   information (in network byte order) that indicates the size of the
+   following NAL unit in bytes (excluding these two octets, but
+   including the NAL unit type octet of the NAL unit), followed by the
+   NAL unit itself, including its NAL unit type byte.  A single-time
+   aggregation unit is byte aligned within the RTP payload, but it may
+   not be aligned on a 32-bit word boundary.  Figure 5 presents the
+   structure of the single-time aggregation unit.
+
+
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 22]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-23" id="page-23" href="#page-23" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+                   :        NAL unit size          |               |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+               |
+   |                                                               |
+   |                           NAL unit                            |
+   |                                                               |
+   |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               :
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+         Figure 5 Structure for single-time aggregation unit (STAU)
+
+   Figure 6 presents an example of an RTP packet that contains an STAP-
+   A.  The STAP-A contains two single-time aggregation units, labeled
+   as 1 and 2 in the figure.
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                          RTP Header                           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |       STAP   NAL HDR          |         NALU 1 Size           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |          NALU 1 HDR           |         NALU 1 Data           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                   . . .                                       |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |  . . .        | NALU 2 Size                   | NALU 2 HDR    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   | NALU 2 HDR    |         NALU 2 Data                           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                   . . .                                       |
+   |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               :...OPTIONAL RTP padding        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+    Figure 6 An example of an RTP packet including an STAP-A containing
+                     two single-time aggregation units
+
+   Figure 7 presents an example of an RTP packet that contains an STAP-
+   B.  The STAP contains two single-time aggregation units, labeled as
+   1 and 2 in the figure.
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 23]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-24" id="page-24" href="#page-24" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                          RTP Header                           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |        STAP-B NAL HDR         | DON                           |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |          NALU 1 Size          |            NALU 1 HDR         |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                          NALU 1 Data                          |
+   +               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   +               | NALU 2 Size                   | NALU 2 HDR    |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   | NALU 2 HDR    |        NALU 2 Data                            |
+   +-+-+-+-+-+-+-+-+                                               |
+   |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               :...OPTIONAL RTP padding        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+    Figure 7 An example of an RTP packet including an STAP-B containing
+                     two single-time aggregation units
+
+
+
+<span class="h3"><a class="selflink" name="section-4.8" href="#section-4.8">4.8</a> Fragmentation Units (FUs)</span>
+
+   This payload type allows fragmenting a NAL unit into several RTP
+   packets.  Doing so on the application layer instead of relying on
+   lower layer fragmentation (e.g., by IP) may have the following use
+   cases:
+
+   o The payload format is capable of transporting NAL units bigger
+      than 64 kbytes over an IPv4 network that may be present in pre-
+      recorded video, particularly in High Definition formats (there is
+      a limit of the number of slices per picture, which results in a
+      limit of NAL units per picture, which may result in big NAL
+      units).
+
+   o The fragmentation mechanism allows fragmenting a single NAL unit
+      and applying generic forward error correction.
+
+   Note: Please see <a href="#section-1.1.2">section 1.1.2</a> for the relationship between
+         fragmentation and dependent slices.
+
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 24]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-25" id="page-25" href="#page-25" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   Fragmentation is defined only for a single NAL unit and not for any
+   aggregation packets.  A fragment of a NAL unit consists of an
+   integer number of consecutive octets of that NAL unit.  Each octet
+   of the NAL unit MUST be part of exactly one fragment of that NAL
+   unit.  Fragments of the same NAL unit MUST be sent in consecutive
+   order with ascending RTP sequence numbers (with no other RTP packets
+   within the same RTP packet stream being sent between the first and
+   last fragment).  Similarly, a NAL unit MUST be reassembled in RTP
+   sequence number order.
+
+   When a NAL unit is fragmented and conveyed within fragmentation
+   units (FUs), it is referred to as a fragmented NAL unit.  STAPs MUST
+   NOT be fragmented.  FUs MUST NOT be nested; i.e., an FU MUST NOT
+   contain another FU.
+
+   The RTP timestamp of an RTP packet carrying an FU is set to the
+   NALU-time of the fragmented NAL unit.
+
+   Figure 8 presents the RTP payload format for FU-A.  An FU-A consists
+   of a fragmentation unit NAL unit header, a fragmentation unit header
+   of one octet, and a fragmentation unit payload.
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |       FU   NAL HDR            |   FU header                   |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               |
+   |                                                               |
+   |                         FU payload                            |
+   |                                                               |
+   |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               :...OPTIONAL RTP padding        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                  Figure 8   RTP payload format for FU-A
+
+   Figure 9 presents the RTP payload format for FU-Bs.  An FU-B
+   consists of a fragmentation unit NAL unit header, a fragmentation
+   unit header of one octet, a decoding order number (DON) (in network
+   byte order), and a fragmentation unit payload.  In other words, the
+   structure of FU-B is the same as the structure of FU-A, except for
+   the additional DON field.
+
+
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 25]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-26" id="page-26" href="#page-26" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |      FU NAL unit header       |   FU header   |      DON      |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-|
+   |     DON       |                                               |
+   |-+-+-+-+-+-+-+-+                                               |
+   |                         FU payload                            |
+   |                                                               |
+   |                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                               :...OPTIONAL RTP padding        |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                  Figure 9   RTP payload format for FU-B
+
+   NAL unit type FU-B MUST be used in the interleaved packetization
+   mode for the first fragmentation unit of a fragmented NAL unit.  NAL
+   unit type FU-B MUST NOT be used in any other case.  In other words,
+   in the interleaved packetization mode, each NALU that is fragmented
+   has an FU-B as the first fragment, followed by one or more FU-A
+   fragments.
+
+
+   The FU NAL unit header has the same format as any NAL unit header,
+   as described in <a href="#section-1.1.4">section 1.1.4</a> above.  A value equal to 50 in the
+   Type field of the FU indicator octet identifies an FU-A packet and a
+   value of 51 identifies an FU-B packet.  The use of the F bit is
+   described in <a href="#section-5">section 5</a>.  The value of the N field MUST be set
+   according to the value of the N field in the fragmented NAL unit.
+
+   The FU header has the following format:
+
+      +---------------+
+      |0|1|2|3|4|5|6|7|
+      +-+-+-+-+-+-+-+-+
+      |S|E|    Type   |
+      +---------------+
+
+   S: 1 bit
+      When set to one, the Start bit indicates the start of a
+      fragmented NAL unit.  When the following FU payload is not the
+      start of a fragmented NAL unit payload, the Start bit is set to
+      zero.
+
+   E: 1 bit
+      When set to one, the End bit indicates the end of a fragmented
+      NAL unit, i.e., the last byte of the payload is also the last
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 26]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-27" id="page-27" href="#page-27" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+      byte of the fragmented NAL unit.  When the following FU payload
+      is not the last fragment of a fragmented NAL unit, the End bit is
+      set to zero.
+
+   Type: 6 bits
+      The NAL unit payload type as defined in Table 7-1 of [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>].
+
+   The value of DON in FU-Bs is selected as described in <a href="#section-4.6">section 4.6</a>.
+
+      Informative note: The DON field in FU-Bs allows gateways to
+      fragment NAL units to FU-Bs without organizing the incoming NAL
+      units to the NAL unit decoding order.
+
+   A non-fragmented NAL unit MUST NOT be transmitted in one FU; i.e.,
+   the Start bit and End bit MUST NOT both be set to one in the same FU
+   header.
+
+   The FU payload consists of fragments of the payload of the
+   fragmented NAL unit so that if the fragmentation unit payloads of
+   consecutive FUs are sequentially concatenated, the payload of the
+   fragmented NAL unit can be reconstructed.  The NAL unit type octet
+   of the fragmented NAL unit is not included as such in the
+   fragmentation unit payload, but rather the information of the NAL
+   unit type octet of the fragmented NAL unit is conveyed in F and N
+   fields of the FU indicator octet of the fragmentation unit and in
+   the type field of the FU header.  An FU payload MAY have any number
+   of octets and MAY be empty.
+
+   If a fragmentation unit is lost, the receiver SHOULD discard all
+   following fragmentation units in transmission order corresponding to
+   the same fragmented NAL unit, unless the decoder in the receiver is
+   known to be prepared to gracefully handle incomplete NAL units.
+
+   A receiver in an endpoint or in a MANE MAY aggregate the first n-1
+   fragments of a NAL unit to an (incomplete) NAL unit, even if
+   fragment n of that NAL unit is not received.  In this case, the
+   forbidden_zero_bit of the NAL unit MUST be set to one to indicate a
+   syntax violation.
+
+
+
+<span class="h2"><a class="selflink" name="section-5" href="#section-5">5</a>. Packetization Rules</span>
+
+   The packetization modes are introduced in <a href="#section-4.5">section 4.5</a>.  The
+   packetization rules common to more than one of the packetization
+   modes are specified in <a href="#section-5.1">section 5.1</a>.  The packetization rules for the
+   non-interleaved mode are specified in <a href="#section-5.2">section 5.2</a>, and the
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 27]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-28" id="page-28" href="#page-28" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   packetization rules for the interleaved mode are specified in
+   sections <a href="#section-5.3">5.3</a>.
+
+
+
+<span class="h3"><a class="selflink" name="section-5.1" href="#section-5.1">5.1</a> Common Packetization Rules</span>
+
+   All senders MUST enforce the following packetization rules
+   regardless of the packetization mode in use:
+
+   o VCL NAL units belonging to the same coded picture (and thus
+      sharing the same RTP timestamp value) SHOULD be sent in their
+      original decoding order to minimize the delay.  Note that the
+      decoding order is the order of the NAL units in the bitstream.
+
+   o Parameter sets are handled in accordance with the rules and
+      recommendations given in <a href="#section-7.4">section 7.4</a>.
+
+   o MANEs MUST NOT duplicate any NAL unit except for sequence or
+      picture parameter set NAL units, as neither this memo nor the
+      HEVC specification provides means to identify duplicated NAL
+      units.  Sequence and picture parameter set NAL units MAY be
+      duplicated to make their correct reception more likely, but any
+      such duplication MUST NOT affect the contents of any active
+      sequence or picture parameter set and the additional bandwidth
+      taken by the duplication MUST NOT increase network congestion
+      beyond what is "allowed" for the session (see section xxx for
+      details).
+
+   Senders using the non-interleaved mode and the interleaved mode MUST
+   enforce the following packetization rule:
+
+   o MANEs MAY convert single NAL unit packets into one aggregation
+      packet, convert an aggregation packet into several single NAL
+      unit packets, or mix both concepts, in an RTP translator.  The
+      RTP translator SHOULD take into account at least the following
+      parameters: path MTU size, unequal protection mechanisms (e.g.,
+      through packet-based FEC according to [<a href="./rfc5109" title="&quot;RTP Payload Format for Generic Forward Error Correction&quot;">RFC5109</a>], especially for
+      sequence and picture parameter set NAL units and coded slice data
+      partition A NAL units), bearable latency of the system, and
+      buffering capabilities of the receiver.
+
+         Informative note: An RTP translator is required to handle RTCP
+         as per [<a href="./rfc3550" title="&quot;RTP: A Transport Protocol for Real-Time Applications&quot;">RFC3550</a>].
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 28]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-29" id="page-29" href="#page-29" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+<span class="h3"><a class="selflink" name="section-5.2" href="#section-5.2">5.2</a> Non-Interleaved mode</span>
+
+   This mode MUST be supported.  This mode is in use when the value of
+   the OPTIONAL packetization-mode media type parameter is equal to 1.
+   It is primarily intended for low-delay applications.  Only single
+   NAL unit packets, STAPs, and FUs MAY be used in this mode.  The
+   transmission order of NAL units MUST comply with the NAL unit
+   decoding order.
+
+<span class="h3"><a class="selflink" name="section-5.3" href="#section-5.3">5.3</a> Interleaved mode</span>
+
+   This mode is in use when the value of the OPTIONAL packetization-
+   mode media type parameter is equal to 2.  Some receivers MAY support
+   this mode.  STAP-Bs, FU-As, and FU-Bs MAY be used.  STAP-As and
+   single NAL unit packets MUST NOT be used.  The transmission order of
+   packets and NAL units is constrained as specified in <a href="#section-4.6">section 4.6</a>.
+
+
+
+<span class="h2"><a class="selflink" name="section-6" href="#section-6">6</a>. De-Packetization Process</span>
+
+   The de-packetization process is implementation dependent.
+   Therefore, the following description should be seen as an example of
+   a suitable implementation.  Other schemes may be used as well as
+   long as the output for the same input is the same as the process
+   described below.  The output is the same meaning that the number of
+   NAL units and their order are both the identical.  Optimizations
+   relative to the described algorithms are likely possible.  <a href="#section-6.1">Section</a>
+   <a href="#section-6.1">6.1</a> presents the de-packetization process for the non-interleaved
+   packetization mode and <a href="#section-6.2">section 6.2</a> presents the de-packetization
+   process for the interleaved packetization mode.
+
+   All normal RTP mechanisms related to buffer management apply.  In
+   particular, duplicated or outdated RTP packets (as indicated by the
+   RTP sequences number and the RTP timestamp) are removed.  To
+   determine the exact time for decoding, factors such as a possible
+   intentional delay to allow for proper inter-stream synchronization
+   must be factored in.
+
+<span class="h3"><a class="selflink" name="section-6.1" href="#section-6.1">6.1</a> Non-Interleaved Mode</span>
+
+   The receiver includes a receiver buffer to compensate for
+   transmission delay jitter.  The receiver stores incoming packets in
+   reception order into the receiver buffer.  Packets are de-packetized
+   in RTP sequence number order.  If a de-packetized packet is a single
+   NAL unit packet, the NAL unit contained in the packet is passed
+   directly to the decoder.  If a de-packetized packet is an STAP-A,
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 29]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-30" id="page-30" href="#page-30" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   the NAL units contained in the packet are passed to the decoder in
+   the order in which they are encapsulated in the packet.  For all the
+   FU-A packets containing fragments of a single NAL unit, the de-
+   packetized fragments are concatenated in their sending order to
+   recover the NAL unit, which is then passed to the decoder.
+
+<span class="h3"><a class="selflink" name="section-6.2" href="#section-6.2">6.2</a> Interleaved Mode</span>
+
+   The general concept behind these de-packetization rules is to
+   reorder NAL units from transmission order to the NAL unit decoding
+   order.
+
+   The receiver includes a receiver buffer, which is used to compensate
+   for transmission delay jitter and to reorder NAL units from
+   transmission order to the NAL unit decoding order.  In this section,
+   the receiver operation is described under the assumption that there
+   is no transmission delay jitter.  To make a difference from a
+   practical receiver buffer that is also used for compensation of
+   transmission delay jitter, the receiver buffer is here after called
+   the de-interleaving buffer in this section.  Receivers SHOULD also
+   prepare for transmission delay jitter; i.e., either reserve separate
+   buffers for transmission delay jitter buffering and de-interleaving
+   buffering or use a receiver buffer for both transmission delay
+   jitter and de-interleaving.  Moreover, receivers SHOULD take
+   transmission delay jitter into account in the buffering operation;
+   e.g., by additional initial buffering before starting of decoding
+   and playback.
+
+   This section is organized as follows: sub<a href="#section-6.2.1">section 6.2.1</a> presents how
+   to calculate the size of the de-interleaving buffer.  Sub<a href="#section-6.2.2">section</a>
+   <a href="#section-6.2.2">6.2.2</a> specifies the receiver process how to organize received NAL
+   units to the NAL unit decoding order.
+
+<span class="h4"><a class="selflink" name="section-6.2.1" href="#section-6.2.1">6.2.1</a> Size of the De-interleaving Buffer</span>
+
+   When the SDP Offer/Answer model or any other capability exchange
+   procedure is used in session setup, the properties of the received
+   stream SHOULD be such that the receiver capabilities are not
+   exceeded.  In the SDP Offer/Answer model, the receiver can indicate
+   its capabilities to allocate a de-interleaving buffer with the
+   deint-buf-cap media type parameter.  The sender indicates the
+   requirement for the de-interleaving buffer size with the sprop-
+   deint-buf-req media type parameter.  It is therefore RECOMMENDED to
+   set the de-interleaving buffer size, in terms of number of bytes,
+   equal to or greater than the value of sprop-deint-buf-req media type
+   parameter.  See <a href="#section-8.1">section 8.1</a> for further information on deint-buf-cap
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 30]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-31" id="page-31" href="#page-31" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   and sprop-deint-buf-req media type parameters and <a href="#section-8.2.2">section 8.2.2</a> for
+   further information on their use in the SDP Offer/Answer model.
+
+   When a declarative session description is used in session setup, the
+   sprop-deint-buf-req media type parameter signals the requirement for
+   the de-interleaving buffer size.  It is therefore RECOMMENDED to set
+   the de-interleaving buffer size, in terms of number of bytes, equal
+   to or greater than the value of sprop-deint-buf-req media type
+   parameter.
+
+<span class="h4"><a class="selflink" name="section-6.2.2" href="#section-6.2.2">6.2.2</a> De-interleaving Process</span>
+
+   There are two buffering states in the receiver: initial buffering
+   and buffering while playing.  Initial buffering occurs when the RTP
+   session is initialized.  After initial buffering, decoding and
+   playback are started, and the buffering-while-playing mode is used.
+
+   Regardless of the buffering state, the receiver stores incoming NAL
+   units, in reception order, in the de-interleaving buffer as follows.
+   NAL units of aggregation packets are stored in the de-interleaving
+   buffer individually.  The value of DON is calculated and stored for
+   each NAL unit.
+
+   The receiver operation is described below with the help of the
+   following functions and constants:
+
+   o Function AbsDON is specified in <a href="#section-7.1">section 7.1</a>.
+
+   o Function don_diff is specified in <a href="#section-4.6">section 4.6</a>.
+
+   o Constant N is the value of the OPTIONAL sprop-interleaving-depth
+      media type type parameter (see <a href="#section-7.1">section 7.1</a>) incremented by 1.
+
+   Initial buffering lasts until one of the following conditions is
+   fulfilled:
+
+   o There are N or more VCL NAL units in the de-interleaving buffer.
+
+   o If sprop-max-don-diff is present, don_diff(m,n) is greater than
+      the value of sprop-max-don-diff, in which n corresponds to the
+      NAL unit having the greatest value of AbsDON among the received
+      NAL units and m corresponds to the NAL unit having the smallest
+      value of AbsDON among the received NAL units.
+
+   o Initial buffering has lasted for the duration equal to or greater
+      than the value of the OPTIONAL sprop-init-buf-time media type
+      parameter.
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 31]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-32" id="page-32" href="#page-32" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   The NAL units to be removed from the de-interleaving buffer are
+   determined as follows:
+
+   o If the de-interleaving buffer contains at least N VCL NAL units,
+      NAL units are removed from the de-interleaving buffer and passed
+      to the decoder in the order specified below until the buffer
+      contains N-1 VCL NAL units.
+
+   o If sprop-max-don-diff is present, all NAL units m for which
+      don_diff(m,n) is greater than sprop-max-don-diff are removed from
+      the de-interleaving buffer and passed to the decoder in the order
+      specified below.  Herein, n corresponds to the NAL unit having
+      the greatest value of AbsDON among the NAL units in the de-
+      interleaving buffer.
+
+   The order in which NAL units are passed to the decoder is specified
+   as follows:
+
+   o Let PDON be a variable that is initialized to 0 at the beginning
+      of the RTP session.
+
+   o For each NAL unit associated with a value of DON, a DON distance
+      is calculated as follows.  If the value of DON of the NAL unit is
+      larger than the value of PDON, the DON distance is equal to DON -
+      PDON.  Otherwise, the DON distance is equal to 65535 - PDON + DON
+      + 1.
+
+   o NAL units are delivered to the decoder in ascending order of DON
+      distance.  If several NAL units share the same value of DON
+      distance, they can be passed to the decoder in any order.
+
+   o When a desired number of NAL units have been passed to the
+      decoder, the value of PDON is set to the value of DON for the
+      last NAL unit passed to the decoder.
+
+<span class="h3"><a class="selflink" name="section-6.3" href="#section-6.3">6.3</a> Additional De-Packetization Guidelines</span>
+
+   The following additional de-packetization rules may be used to
+   implement an operational HEVC de-packetizer:
+
+   o Intelligent RTP receivers (e.g., in MANEs) may identify lost FUs.
+      If a lost FU is detected, a gateway MAY decide not to send the
+      following FUs of the same fragmented NAL unit, as their
+      information is meaningless for HEVC decoders.  In this way a MANE
+      can reduce network load by discarding useless packets without
+      parsing a complex bitstream.
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 32]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-33" id="page-33" href="#page-33" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+<span class="h2"><a class="selflink" name="section-7" href="#section-7">7</a>. Payload Format Parameters</span>
+
+   This section specifies the parameters that MAY be used to select
+   optional features of the payload format and certain features of the
+   bitstream.  The parameters are specified here as part of the media
+   type registration for the HEVC codec.  A mapping of the parameters
+   into the Session Description Protocol (SDP) [<a href="./rfc4566" title="&quot;SDP: Session Description Protocol&quot;">RFC4566</a>] is also
+   provided for applications that use SDP.  Equivalent parameters could
+   be defined elsewhere for use with control protocols that do not use
+   SDP.
+
+   Some parameters provide a receiver with the properties of the stream
+   that will be sent.  The names of all these parameters start with
+   "sprop" for stream properties.  Some of these "sprop" parameters are
+   limited by other payload or codec configuration parameters.  For
+   example, the sprop-parameter-sets parameter is constrained by the
+   profile-tier-level-id parameter.  The media sender selects all
+   "sprop" parameters rather than the receiver.  This uncommon
+   characteristic of the "sprop" parameters may be incompatible with
+   some signaling protocol concepts, in which case the use of these
+   parameters SHOULD be avoided.
+
+<span class="h3"><a class="selflink" name="section-7.1" href="#section-7.1">7.1</a> Media Type Registration</span>
+
+   The media subtype for the HEVC codec is allocated from the IETF
+   tree.
+
+   The receiver MUST ignore any unspecified parameter.
+
+   Media Type name:     video
+
+   Media subtype name:  H265
+
+   Required parameters: none
+
+   OPTIONAL parameters:
+
+      In the following definitions of parameters, "the stream" or "the
+      NAL unit stream" refers to all NAL units conveyed in the current
+      RTP session in SST, and all NAL units conveyed in the current RTP
+      session and all NAL units conveyed in other RTP sessions that the
+      current RTP session depends on in MST.
+
+      profile-tier-level-id:
+
+      A base16 [7] (hexadecimal) representation of the following four
+      bytes in the sequence parameter set or video parameter set NAL
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 33]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-34" id="page-34" href="#page-34" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+      units is specified in [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>]: 1) a byte herein referred to
+      profile-tier-iop, composed of the values of the 2-bit
+      general_profile_space, the general_tier_flag and the 5-bit
+      profile_idc, 2) the 8 MSB of general_reserved_zero_16bits, 3) the
+      8 LSB of general_reserved_zero_16bits and 4) level_idc. Note that
+      general_reserved_zero_16bits is required to be equal to 0 in
+      [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>], but other values for it may be specified in the future by
+      ITU-T or ISO/IEC.
+
+      The profile-tier-level-id parameter indicates the default profile
+      (i.e., the subset of coding tools that may have been used to
+      generate the stream or that the receiver supports) and the
+      default level of the stream or the receiver supports.
+
+      If the profile-tier-level-id parameter is used to indicate
+      properties of a NAL unit stream, it indicates that, to decode the
+      stream, the minimum subset of coding tools a decoder has to
+      support is the default profile, and the lowest level the decoder
+      has to support is the default level.
+
+      If the profile-tier-level-id parameter is used for capability
+      exchange or session setup, it indicates the subset of coding
+      tools, which is equal to the default profile, that the codec
+      supports for both receiving and sending. If max-recv-level is not
+      present, the default level from profile-tier-level-id indicates
+      the highest level the codec wishes to support. If max-recv-level
+      is present, it indicates the highest level the codec supports for
+      receiving. For either receiving or sending, all levels that are
+      lower than the highest level supported MUST also be supported.
+
+      If no profile-tier-level-id is present, the Main profile, without
+      additional constraints at Level 1, MUST be inferred.
+
+      profile-compatibility-indicator:
+
+      A base16 [7] representation of the four bytes conforming the 32
+      general_profile_compatibility_flags in the sequence parameter set
+      or video parameter set NAL units. A decoder conforming to a
+      certain profile may be able to decode bitstreams conforming to
+      other profiles. The profile-compatibility-indicator provides
+      exact information of the ability of a decoder conforming to a
+      certain profile to decode bitstreams conforming to another
+      profile. More concretely, if the
+      general_profile_compatibility_flag corresponding to the profile,
+      which a decoder conforms to, is set, then the decoder is able to
+      decode that bitstream with the flag set, irrespective of the
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 34]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-35" id="page-35" href="#page-35" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+      profile, which a bistream conforms to (provided that the decoder
+      supports the highest level of the bitstream).
+
+      max-recv-level:
+
+      This parameter MAY be used to indicate the highest level a
+      receiver supports when the highest level is higher than the
+      default level (the level indicated by profile-tier-level-id). The
+      value of max-recv-level is a base16 (hexadecimal) representation
+      of the syntax element general_level_idc in the sequence parameter
+      set or video parameter set NAL unit specified in [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>]. The
+      highest level the receiver supports is equal to the level_idc
+      byte of max-recv-level divided by 30.
+
+
+
+      max-recv-level MUST NOT be present if the highest level the
+      receiver supports is not higher than the default level.
+
+      sprop-parameter-sets:
+
+      This parameter MAY be used to convey any video parameter set,
+      sequence parameter set and picture parameter set NAL units
+      (herein referred to as the initial parameter set NAL units) that
+      can be placed in the NAL unit stream to precede any other NAL
+      units in decoding order. The parameter MUST NOT be used to
+      indicate codec capability in any capability exchange procedure.
+      The value of the parameter is a comma-separated (',') list of
+      base64 [<a href="./rfc4648" title="&quot;The Base16, Base32, and Base64 Data Encodings&quot;">RFC4648</a>] representations of parameter set NAL units as
+      specified in Sections <a href="#section-7.3.2.1">7.3.2.1</a>, <a href="#section-7.3.2.2">7.3.2.2</a> and <a href="#section-7.3.2.3">7.3.2.3</a> of [<a href="#ref-HEVC" title="&quot;High-Efficiency Video Coding (HEVC) text specification Working Draft 9&quot;">HEVC</a>].
+      Note that the number of bytes in a parameter set NAL unit is
+      typically less than 10, but a picture parameter set NAL unit can
+      contain several hundred bytes.
+
+          Informative note: When several payload types are offered in
+          the SDP Offer/Answer model, each with its own sprop-
+          parameter-sets parameter, the receiver cannot assume that
+          those parameter sets do not use conflicting storage locations
+          (i.e., identical values of parameter set identifiers).
+          Therefore, a receiver should buffer all sprop-parameter-sets
+          and make them available to the decoder instance that decodes
+          a certain payload type.
+
+      The sprop-parameter-sets parameter MUST only contain parameter
+      sets that are conforming to the profile-tier-level-id, i.e., the
+      subset of coding tools indicated by any of the parameter sets
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 35]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-36" id="page-36" href="#page-36" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+      MUST be equal to the default profile, and the level indicated by
+      any of the parameter sets MUST be equal to the default level.
+
+
+
+      max-mbps, max-smbps, max-fs, max-cpb, max-dpb, and max-br:
+         TBD
+
+      max-mbps:
+         TBD
+
+      max-smbps:
+         TBD
+
+      max-fs:
+         TBD
+
+      max-cpb:
+         TBD
+
+      max-dpb:
+         TBD
+
+      max-br:
+         TBD
+
+      sprop-level-parameter-sets:
+         TBD
+
+      use-level-src-parameter-sets:
+         TBD
+
+      packetization-mode:
+         This parameter signals the properties of an RTP payload type
+         or the capabilities of a receiver implementation.  Only a
+         single configuration point can be indicated; thus, when
+         capabilities to support more than one packetization-mode are
+         declared, multiple configuration points (RTP payload types)
+         must be used.
+
+         When the value of packetization-mode is equal to 1, the non-
+         interleaved mode, as defined in <a href="#section-5.2">section 5.2</a> MUST be used.
+         When the value of packetization-mode is equal to 2, the
+         interleaved mode, as defined in <a href="#section-5.3">section 5.3</a>, MUST be used.
+         The value of packetization-mode MUST be an integer in the
+         range of 1 to 2, inclusive.
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 36]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-37" id="page-37" href="#page-37" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+      sprop-interleaving-depth:
+         This parameter MUST NOT be present when packetization-mode is
+         not present or the value of packetization-mode is equal to 0
+         or 1.  This parameter MUST be present when the value of
+         packetization-mode is equal to 2.
+
+         This parameter signals the properties of an RTP packet stream.
+         It specifies the maximum number of VCL NAL units that precede
+         any VCL NAL unit in the RTP packet stream in transmission
+         order and follow the VCL NAL unit in decoding order.
+         Consequently, it is guaranteed that receivers can reconstruct
+         NAL unit decoding order when the buffer size for NAL unit
+         decoding order recovery is at least the value of sprop-
+         interleaving-depth + 1 in terms of VCL NAL units.
+
+         The value of sprop-interleaving-depth MUST be an integer in
+         the range of 0 to 32767, inclusive.
+
+      sprop-deint-buf-req:
+         This parameter MUST NOT be present when packetization-mode is
+         not present or the value of packetization-mode is not equal to
+         2.  It MUST be present when the value of packetization-mode is
+         equal to 2.
+
+         sprop-deint-buf-req signals the required size of the de-
+         interleaving buffer for the RTP packet stream.  The value of
+         the parameter MUST be greater than or equal to the maximum
+         buffer occupancy (in units of bytes) required in such a de-
+         interleaving buffer that is specified in <a href="#section-6.2">section 6.2</a>.  It is
+         guaranteed that receivers can perform the de-interleaving of
+         interleaved NAL units into NAL unit decoding order, when the
+         de-interleaving buffer size is at least the value of sprop-
+         deint-buf-req in terms of bytes.
+
+         The value of sprop-deint-buf-req MUST be an integer in the
+         range of 0 to 4294967295, inclusive.
+
+             Informative note: sprop-deint-buf-req indicates the
+             required size of the de-interleaving buffer only.  When
+             network jitter can occur, an appropriately sized jitter
+             buffer has to be provisioned for as well.
+
+      deint-buf-cap:
+         This parameter signals the capabilities of a receiver
+         implementation and indicates the amount of de-interleaving
+         buffer space in units of bytes that the receiver has available
+         for reconstructing the NAL unit decoding order.  A receiver is
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 37]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-38" id="page-38" href="#page-38" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+         able to handle any stream for which the value of the sprop-
+         deint-buf-req parameter is smaller than or equal to this
+         parameter.
+
+         If the parameter is not present, then a value of 0 MUST be
+         used for deint-buf-cap.  The value of deint-buf-cap MUST be an
+         integer in the range of 0 to 4294967295, inclusive.
+
+             Informative note: deint-buf-cap indicates the maximum
+             possible size of the de-interleaving buffer of the receiver
+             only.  When network jitter can occur, an appropriately
+             sized jitter buffer has to be provisioned for as well.
+
+      sprop-init-buf-time:
+         This parameter MAY be used to signal the properties of an RTP
+         packet stream.  The parameter MUST NOT be present, if the
+         value of packetization-mode is equal to 1.
+
+         The parameter signals the initial buffering time that a
+         receiver MUST wait before starting decoding to recover the NAL
+         unit decoding order from the transmission order.  The
+         parameter is the maximum value of (decoding time of the NAL
+         unit - transmission time of a NAL unit), assuming reliable and
+         instantaneous transmission, the same timeline for transmission
+         and decoding, and that decoding starts when the first packet
+         arrives.
+
+         An example of specifying the value of sprop-init-buf-time
+         follows.  A NAL unit stream is sent in the following
+         interleaved order, in which the value corresponds to the
+         decoding time and the transmission order is from left to
+         right:
+
+             0  2  1  3  5  4  6  8  7 ...
+
+         Assuming a steady transmission rate of NAL units, the
+         transmission times are:
+
+             0  1  2  3  4  5  6  7  8 ...
+
+         Subtracting the decoding time from the transmission time
+         column-wise results in the following series:
+
+             0 -1  1  0 -1  1  0 -1  1 ...
+
+         Thus, in terms of intervals of NAL unit transmission times,
+         the value of sprop-init-buf-time in this example is 1.  The
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 38]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-39" id="page-39" href="#page-39" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+         parameter is coded as a non-negative base10 integer
+         representation in clock ticks of a 90-kHz clock.  If the
+         parameter is not present, then no initial buffering time value
+         is defined.  Otherwise the value of sprop-init-buf-time MUST
+         be an integer in the range of 0 to 4294967295, inclusive.
+
+         In addition to the signaled sprop-init-buf-time, receivers
+         SHOULD take into account the transmission delay jitter
+         buffering, including buffering for the delay jitter caused by
+         mixers, translators, gateways, proxies, traffic-shapers, and
+         other network elements.
+
+      sprop-max-don-diff:
+         This parameter MAY be used to signal the properties of an RTP
+         packet stream.  It MUST NOT be used to signal transmitter or
+         receiver or codec capabilities.  The parameter MUST NOT be
+         present if the value of packetization-mode is equal to 1.
+         sprop-max-don-diff is an integer in the range of 0 to 32767,
+         inclusive.  If sprop-max-don-diff is not present, the value of
+         the parameter is unspecified.  sprop-max-don-diff is
+         calculated as follows:
+
+             sprop-max-don-diff = max{AbsDON(i) - AbsDON(j)},
+             for any i and any j&gt;i,
+
+         where i and j indicate the index of the NAL unit in the
+         transmission order and AbsDON denotes a decoding order number
+         of the NAL unit that does not wrap around to 0 after 65535.
+         In other words, AbsDON is calculated as follows: Let m and n
+         be consecutive NAL units in transmission order.  For the very
+         first NAL unit in transmission order (whose index is 0),
+         AbsDON(0) = DON(0).  For other NAL units, AbsDON is calculated
+         as follows:
+
+             If DON(m) == DON(n), AbsDON(n) = AbsDON(m)
+
+             If (DON(m) &lt; DON(n) and DON(n) - DON(m) &lt; 32768),
+               AbsDON(n) = AbsDON(m) + DON(n) - DON(m)
+
+             If (DON(m) &gt; DON(n) and DON(m) - DON(n) &gt;= 32768),
+               AbsDON(n) = AbsDON(m) + 65536 - DON(m) + DON(n)
+
+             If (DON(m) &lt; DON(n) and DON(n) - DON(m) &gt;= 32768),
+               AbsDON(n) = AbsDON(m) - (DON(m) + 65536 - DON(n))
+
+             If (DON(m) &gt; DON(n) and DON(m) - DON(n) &lt; 32768),
+               AbsDON(n) = AbsDON(m) - (DON(m) - DON(n))
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 39]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-40" id="page-40" href="#page-40" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+         where DON(i) is the decoding order number of the NAL unit
+         having index i in the transmission order.  The decoding order
+         number is specified in <a href="#section-4.6">section 4.6</a>.
+
+             Informative note: Receivers may use sprop-max-don-diff to
+             trigger which NAL units in the receiver buffer can be
+             passed to the decoder.
+
+      max-rcmd-nalu-size:
+         TBD
+
+      sar-understood:
+         TBD
+
+      sar-supported:
+         TBD
+
+
+
+      Encoding considerations:
+         This type is only defined for transfer via RTP (<a href="./rfc3550">RFC 3550</a>).
+
+      Security considerations:
+         See <a href="#section-8">Section 8</a> of RFC XXXX.
+
+      Public specification:
+         Please refer to <a href="#section-13">Section 13</a> of RFC XXXX.
+
+      Additional information:
+         None
+
+      File extensions:     none
+
+      Macintosh file type code: none
+
+      Object identifier or OID: none
+
+      Person &amp; email address to contact for further information:
+
+        Thomas Schierl, ts@thomas-schierl.de
+
+      Intended usage:      COMMON
+
+      Author:
+
+        Thomas Schierl, ts@thomas-schierl.de
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 40]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-41" id="page-41" href="#page-41" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+      Change controller:
+         IETF Audio/Video Transport Payloads working group delegated
+         from the IESG.
+
+<span class="h3"><a class="selflink" name="section-7.2" href="#section-7.2">7.2</a> SDP Parameters</span>
+
+<span class="h4"><a class="selflink" name="section-7.2.1" href="#section-7.2.1">7.2.1</a> Mapping of Payload Type Parameters to SDP</span>
+
+   TBD
+
+<span class="h4"><a class="selflink" name="section-7.2.2" href="#section-7.2.2">7.2.2</a> Usage with the SDP Offer/Answer Model</span>
+
+   The media type video/H265 string is mapped to fields in the Session
+   Description Protocol (SDP) [<a href="./rfc4566" title="&quot;SDP: Session Description Protocol&quot;">RFC4566</a>] as follows:
+
+   o The media name in the "m=" line of SDP MUST be video.
+
+   o The encoding name in the "a=rtpmap" line of SDP MUST be H265 (the
+      media subtype).
+
+   o The clock rate in the "a=rtpmap" line MUST be 90000.
+
+   o The OPTIONAL parameters "profile-tier-level-id", "packetization-
+      mode", when present, MUST be included in the "a=fmtp" line of
+      SDP.  These parameters are expressed as a media type string, in
+      the form of a semicolon separated list of parameter=value pairs.
+
+   o The OPTIONAL parameters "sprop-parameter-sets" and "sprop-level-
+      parameter-sets", when present, MUST be included in the "a=fmtp"
+      line of SDP or conveyed using the "fmtp" source attribute as
+      specified in <a href="./rfc5576#section-6.3">section&nbsp;6.3 of [RFC5576]</a>.  For a particular media
+      format (i.e., RTP payload type), a "sprop-parameter-sets" or
+      "sprop-level-parameter-sets" MUST NOT be both included in the
+      "a=fmtp" line of SDP and conveyed using the "fmtp" source
+      attribute.  When included in the "a=fmtp" line of SDP, these
+      parameters are expressed as a media type string, in the form of a
+      semicolon separated list of parameter=value pairs.  When conveyed
+      using the "fmtp" source attribute, these parameters are only
+      associated with the given source and payload type as parts of the
+      "fmtp" source attribute.
+
+         Informative note: Conveyance of "sprop-parameter-sets" and
+         "sprop-level-parameter-sets" using the "fmtp" source attribute
+         allows for out-of-band transport of parameter sets in
+         topologies like Topo-Video-switch-MCU [TBD].
+
+   An example of media representation in SDP is as follows:
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 41]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-42" id="page-42" href="#page-42" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   m=video 49170 RTP/AVP 98
+   a=rtpmap:98 H265/90000
+   a=fmtp:98 profile-tier-level-id=UVWXYZ;
+             packetization-mode=1;
+             sprop-parameter-sets=&lt;parameter sets data&gt;
+
+<span class="h4"><a class="selflink" name="section-7.2.3" href="#section-7.2.3">7.2.3</a> Usage with SDP Offer/Answer Model</span>
+
+   TBD
+
+<span class="h4"><a class="selflink" name="section-7.2.4" href="#section-7.2.4">7.2.4</a> Usage in Declarative Session Descriptions</span>
+
+   TBD
+
+<span class="h4"><a class="selflink" name="section-7.2.5" href="#section-7.2.5">7.2.5</a> Signaling of Parallel Processing</span>
+
+   [Ed.Note(TS): Do need text on signaling of parallelization, JCT-VC
+   will include signaling for multithreading support in the VUI as
+   "min_spatial_segmentation_idc" parameter. First approach copy
+   parameter to SDP.]
+
+7.3Examples
+
+   TBD.
+
+<span class="h3"><a class="selflink" name="section-7.4" href="#section-7.4">7.4</a> Parameter Set Considerations</span>
+
+   TBD
+
+<span class="h2"><a class="selflink" name="section-8" href="#section-8">8</a>. Security Considerations</span>
+
+   TBD
+
+<span class="h2"><a class="selflink" name="section-9" href="#section-9">9</a>. Congestion Control</span>
+
+   TBD
+
+<span class="h2"><a class="selflink" name="section-10" href="#section-10">10</a>. IANA Consideration</span>
+
+   A new media type, as specified in <a href="#section-7.1">Section 7.1</a> of this memo, should
+   be registered with IANA.
+
+<span class="h2"><a class="selflink" name="section-11" href="#section-11">11</a>. Informative Appendix: Application Examples</span>
+
+<span class="h3"><a class="selflink" name="section-11.1" href="#section-11.1">11.1</a> Introduction</span>
+
+   TBD
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 42]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-43" id="page-43" href="#page-43" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+<span class="h3"><a class="selflink" name="section-11.2" href="#section-11.2">11.2</a> Streaming</span>
+
+   TBD
+
+<span class="h3"><a class="selflink" name="section-11.3" href="#section-11.3">11.3</a> Videoconferencing (Unicast to MANE, Unicast to Endpoints)</span>
+
+   TBD
+
+<span class="h3"><a class="selflink" name="section-11.4" href="#section-11.4">11.4</a> Mobile TV (Multicast to MANE, Unicast to Endpoint)</span>
+
+   TBD
+
+<span class="h2"><a class="selflink" name="section-12" href="#section-12">12</a>. Acknowledgements</span>
+
+   TBD
+
+   This document was prepared using 2-Word-v2.0.template.dot.
+
+<span class="h2"><a class="selflink" name="section-13" href="#section-13">13</a>. References</span>
+
+<span class="h3"><a class="selflink" name="section-13.1" href="#section-13.1">13.1</a> Normative References</span>
+
+   [<a name="ref-HEVC" id="ref-HEVC">HEVC</a>]   JCT-VC, "High-Efficiency Video Coding (HEVC) text
+             specification Working Draft 9", JCTVC-K1003, October 2012.
+
+   [<a name="ref-H.264" id="ref-H.264">H.264</a>]  ITU-T Recommendation H.264, "Advanced video coding for
+             generic audiovisual services", March 2010.
+
+   [<a name="ref-RFC6184" id="ref-RFC6184">RFC6184</a>] Wang, Y.-K., Even, R., Kristensen, T., and R. Jesup, "RTP
+             Payload Format for H.264 Video", <a href="./rfc6184">RFC 6184</a>, May 2011.
+
+   [<a name="ref-RFC6190" id="ref-RFC6190">RFC6190</a>] Wenger, S., Wang, Y.-K., Schierl, T., and A.
+             Eleftheriadis, "RTP Payload Format for Scalable Video
+             Coding", <a href="./rfc6190">RFC 6190</a>, May 2011.
+
+   [<a name="ref-RFC2119" id="ref-RFC2119">RFC2119</a>] Bradner, S., "Key words for use in RFCs to Indicate
+             Requirement Levels", <a href="./bcp14">BCP 14</a>, <a href="./rfc2119">RFC 2119</a>, March 1997.
+
+   [<a name="ref-RFC3264" id="ref-RFC3264">RFC3264</a>] Rosenberg, J. and H. Schulzrinne, "An Offer/Answer Model
+             With Session Description Protocol (SDP)", <a href="./rfc3264">RFC 3264</a>, June
+             2002.
+
+   [<a name="ref-RFC4648" id="ref-RFC4648">RFC4648</a>] Josefsson, S., "The Base16, Base32, and Base64 Data
+             Encodings", <a href="./rfc4648">RFC 4648</a>, October 2006.
+
+
+
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 43]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-44" id="page-44" href="#page-44" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   [<a name="ref-RFC3550" id="ref-RFC3550">RFC3550</a>] Schulzrinne, H., Casner, S., Frederick, R., and Jacobson,
+             V., "RTP: A Transport Protocol for Real-Time
+             Applications", STD 64, <a href="./rfc3550">RFC 3550</a>, July 2003.
+
+   [<a name="ref-RFC4566" id="ref-RFC4566">RFC4566</a>] Handley, M., Jacobson, V., and Perkins, C., "SDP: Session
+             Description Protocol", <a href="./rfc4566">RFC 4566</a>, July 2006.
+
+   [<a name="ref-RFC5576" id="ref-RFC5576">RFC5576</a>] Lennox, J., Ott, J., and Schierl, T., "Source-Specific
+             Media Attributes in the Session Description Protocol", <a href="./rfc5576">RFC</a>
+             <a href="./rfc5576">5576</a>, June 2009.
+
+<span class="h3"><a class="selflink" name="section-13.2" href="#section-13.2">13.2</a> Informative References</span>
+
+   [<a name="ref-RFC5109" id="ref-RFC5109">RFC5109</a>] Li, A., "RTP Payload Format for Generic Forward Error
+             Correction", <a href="./rfc5109">RFC 5109</a>, December 2007.
+
+<span class="h2"><a class="selflink" name="section-14" href="#section-14">14</a>. Authors' Addresses</span>
+
+   Thomas Schierl
+   Fraunhofer HHI
+   Einsteinufer 37
+   D-10587 Berlin
+   Germany
+   Phone: +49-30-31002-227
+   Email: ts@thomas-schierl.de
+
+   Stephan Wenger
+   Vidyo, Inc.          th       433 Hackensack Ave., 7  floor
+   Hackensack, N.J. 07601
+   USA
+   Phone: +1-415-713-5473
+   EMail: stewe@stewe.org
+
+   Ye-Kui Wang
+   Qualcomm Incorporated
+   5775 Morehouse Drive
+   San Diego, CA 92121
+   USA
+   Phone: +1-858-651-8345
+   EMail: yekuiw@qti.qualcomm.com
+
+   Miska M. Hannuksela
+
+
+<span class="grey">Schierl, et al         Expires April 22, 2013                [Page 44]</span></pre>
+<hr class='noprint' style='width: 96ex;' align='left'/><!--NewPage--><pre class='newpage'><a name="page-45" id="page-45" href="#page-45" class="invisible"> </a>
+<span class="grey">Internet-Draft       RTP Payload Format for HEVC           October 2012</span>
+
+
+   Nokia Corporation
+   P.O. Box 1000
+   33721 Tampere
+   Finland
+   Phone: +358-7180-08000
+   EMail: miska.hannuksela@nokia.com
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Schierl, et al         Expires April 22, 2013                [Page 45]
+
+</pre><br />
+    <span class="noprint"><small><small>Html markup produced by rfcmarkup 1.115, available from
+      <a href="https://tools.ietf.org/tools/rfcmarkup/">https://tools.ietf.org/tools/rfcmarkup/</a>
+    </small></small></span>
+  </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+rtsp://192.168.1.10/test.264
+http://blog.csdn.net/jiaozi07/article/details/43154255
+http://blog.csdn.net/leixiaohua1020/article/details/11955341
+Opiton---Describe--Setup-Play--------.............-------Teardown
+
+OPTION rtsp://192.168.1.10 RTST/1.0 CSeq: 2
+
+
+2496:OPTIONS
+2498:OPTIONS Reply
+2499:DESCRIBE
+2502:DESCRIBE Reply
+2507:SETUP
+2527:SETUP Reply
+2534:PLAY
+2538:PLAY Reply
+2539~11112:所有的H264包
+11113:TEARDOWN
+11116:TEARDOWN Reply
