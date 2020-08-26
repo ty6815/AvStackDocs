@@ -1,0 +1,5 @@
+LAS: Live Adaptive Streaming
+官网:  https://las-tech.org.cn
+GitHub: https://github.com/KwaiVideoTeam/las
+Demo:  https://kwaivideoteam.github.io/las.js/demo/index.html
+问题收集: https://app.sli.do/event/w5bmjkz5/live/questions
